@@ -2,7 +2,8 @@ import type { GameData, Recipe } from "../data/schema";
 import { inputsRecord, qtyOf, recipesFor } from "./rates";
 import { mixFor, type Mix, type MergeMode } from "./balancer";
 
-export interface LineTier { product: string; short: string; variants?: boolean }
+/** variants: true = pick by recipe.label equal to the design's variant; object = variant name -> regex tested on recipe.label ?? id. */
+export interface LineTier { product: string; short: string; variants?: boolean | Record<string, string> }
 export interface ProductLine { id: string; name: string; base: string; tiers: LineTier[] }
 
 export interface Design {
@@ -46,7 +47,10 @@ export function engine(data: GameData, L: ProductLine, D: Design, over: Partial<
   for (const k of act) {
     const t = L.tiers[k];
     const rs = recipesFor(data, t.product, C.tier);
-    const r = t.variants ? rs.find((x) => x.label === C.variant) : rs[0];
+    const v = t.variants;
+    const r = !v ? rs[0]
+      : v === true ? rs.find((x) => x.label === C.variant)
+      : rs.find((x) => new RegExp(v[C.variant] ?? "$^").test(x.label ?? x.id));
     if (!r) return fail(`${t.short} can't be made on ${C.tier}${t.variants ? " with the " + C.variant.replace("from ", "").toLowerCase() + " recipe" : ""}. Choose a higher assembler tier, another recipe, or a lower final product.`, k);
     const q = inputsRecord(r), o = qtyOf(r.outputs, t.product), rate = (o * 60) / r.durationSec;
     const mix = mixFor(q, C.merge[k] ?? "best", sn);

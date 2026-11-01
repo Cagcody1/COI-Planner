@@ -5,7 +5,7 @@ export interface Product { id: string; name: string; kind: ProductKind; icon?: s
 export interface Port { x: number; y: number; dir: "N" | "E" | "S" | "W"; kind: string }
 export interface Machine {
   id: string; name: string; family: string; tier: number;
-  workers?: number; electricityKw?: number;
+  workers?: number; electricityKw?: number; computing?: number;
   maintenance?: { product: string; perMonth: number };
   footprint?: { w: number; h: number };
   ports?: Port[];
@@ -65,7 +65,7 @@ export function validateGameData(d: unknown): string[] {
     rid.add(r.id);
     if (!mid.has(r.machineId)) errs.push(`recipe ${r.id}: unknown machine ${r.machineId}`);
     if (!(r.durationSec > 0)) errs.push(`recipe ${r.id}: durationSec must be > 0`);
-    if (!Array.isArray(r.inputs) || !Array.isArray(r.outputs) || r.outputs.length === 0) errs.push(`recipe ${r.id}: needs inputs[] and non-empty outputs[]`);
+    if (!Array.isArray(r.inputs) || !Array.isArray(r.outputs)) errs.push(`recipe ${r.id}: needs inputs[] and outputs[] (outputs may be empty for sinks)`);
     for (const s of [...(r.inputs ?? []), ...(r.outputs ?? [])]) {
       if (!pid.has(s.product)) errs.push(`recipe ${r.id}: unknown product ${s.product}`);
       if (!(s.qty > 0)) errs.push(`recipe ${r.id}: qty must be > 0 for ${s.product}`);

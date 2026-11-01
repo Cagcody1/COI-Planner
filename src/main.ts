@@ -1,6 +1,6 @@
 // Minimal shell: a first-cut flex loop designer wired to the engine. The full UI comes in M3-M5.
-import data from "../data/prototype/gamedata.json";
-import lines from "../data/lines.json";
+import data from "../data/0.8.1a-b550-Update-4/gamedata.json";
+import lines from "../data/0.8.1a-b550-Update-4/lines.json";
 import { engine, fullMatrix, type Design, type ProductLine } from "./engine/flexloop";
 import type { GameData } from "./data/schema";
 
@@ -9,9 +9,9 @@ const app = document.getElementById("app")!;
 app.innerHTML = `<style>body{font:15px system-ui;margin:16px;max-width:760px}label{display:block;margin:6px 0}</style>
 <h1>Captain of Industry Planner</h1><p>Game data: <b>${G.meta.gameVersion}</b> (${G.recipes.length} recipes). Early build: flex loop result only.</p>
 <label>Line <select id="l">${LS.map((l) => `<option>${l.id}</option>`).join("")}</select></label>
-<label>Assembler <select id="t">${["I","II","III","IV","V"].map((x) => `<option>Assembly ${x}</option>`).join("")}</select></label>
+<label>Assembler <select id="t">${["I","II","III","IV","V"].map((x, i) => `<option value="${(LS[0] as any).assemblers[i]}"${i === 2 ? " selected" : ""}>Assembly ${x}</option>`).join("")}</select></label>
 <label>Count <input id="n" type="number" value="8" min="1" max="24"></label>
-<label>Belt <select id="b"><option value="200">Belt II</option><option value="450">Belt III</option></select></label>
+<label>Belt <select id="b"><option value="199.80468">Belt II</option><option value="450">Belt III</option></select></label>
 <label>Final tier <select id="top"><option value="1">2nd</option><option value="2" selected>3rd</option><option value="3">4th</option></select></label>
 <label>Mode <select id="m"><option value="phases">Priority phases</option><option value="blend">Throttled</option></select></label>
 <pre id="out"></pre>`;

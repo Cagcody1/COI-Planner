@@ -6,7 +6,7 @@ import { validateGameData, type GameData } from "../src/data/schema";
 import { recipesFor, inputsRecord } from "../src/engine/rates";
 
 const data: GameData = JSON.parse(readFileSync("data/prototype/gamedata.json", "utf8"));
-const lines: ProductLine[] = JSON.parse(readFileSync("data/lines.json", "utf8"));
+const lines: ProductLine[] = JSON.parse(readFileSync("data/prototype/lines.json", "utf8"));
 const CP = lines.find((l) => l.id === "CP")!, VP = lines.find((l) => l.id === "VP")!;
 
 const design = (L: ProductLine, o: Partial<Design>): Design => {
