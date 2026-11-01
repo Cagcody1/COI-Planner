@@ -2,6 +2,8 @@ name: CI
 on:
   push: { branches: [main] }
   pull_request:
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,5 +15,19 @@ jobs:
       - run: npm run data:validate
       - run: npm test
       - run: npm run build
-      - uses: actions/upload-artifact@v4
-        with: { name: site, path: dist }
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+
+  # Publishes the built site to GitHub Pages on pushes to main. Separate job so a Pages
+  # problem (e.g. Pages not enabled) never makes the build/test job fail.
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: { pages: write, id-token: write }
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

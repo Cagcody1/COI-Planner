@@ -12,6 +12,9 @@ npm run build         # type-check + production build into dist/
 npm run wiki:check    # cross-check recipes against wiki.coigame.com (needs network)
 ```
 
+## Live site
+Every push to `main` is built and tested by GitHub Actions and published to GitHub Pages: https://cagcody1.github.io/COI-Planner/ . One-time setup: repo Settings → Pages → Source: **GitHub Actions**.
+
 ## Status
 | Milestone | State |
 |---|---|
