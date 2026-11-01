@@ -1,0 +1,22 @@
+{
+  "name": "coi-planner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "data:proto": "tsx scripts/build-proto-data.ts",
+    "data:validate": "tsx scripts/validate-data.ts",
+    "wiki:check": "tsx tools/wiki-check/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.0"
+  }
+}

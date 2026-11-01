@@ -1,0 +1,14 @@
+[
+  { "id": "CP", "name": "Construction Parts", "base": "CP I",
+    "tiers": [
+      { "product": "Construction Parts", "short": "CP I", "variants": true },
+      { "product": "Construction Parts II", "short": "CP II" },
+      { "product": "Construction Parts III", "short": "CP III" },
+      { "product": "Construction Parts IV", "short": "CP IV" } ] },
+  { "id": "VP", "name": "Vehicle Parts", "base": "MP",
+    "tiers": [
+      { "product": "Mechanical Parts", "short": "MP", "variants": true },
+      { "product": "Vehicle Parts", "short": "VP I" },
+      { "product": "Vehicle Parts II", "short": "VP II" },
+      { "product": "Vehicle Parts III", "short": "VP III" } ] }
+]

@@ -1,0 +1,2493 @@
+{
+ "meta": {
+  "gameVersion": "prototype",
+  "exportedAt": "2026-11-01T15:11:58.715Z",
+  "source": "coi-ratio.html prototype (wiki, partly guessed)"
+ },
+ "products": [
+  {
+   "id": "Iron",
+   "name": "Iron",
+   "kind": "unit"
+  },
+  {
+   "id": "Wood",
+   "name": "Wood",
+   "kind": "unit"
+  },
+  {
+   "id": "Concrete Slab",
+   "name": "Concrete Slab",
+   "kind": "unit"
+  },
+  {
+   "id": "Construction Parts",
+   "name": "Construction Parts",
+   "kind": "unit"
+  },
+  {
+   "id": "Steel",
+   "name": "Steel",
+   "kind": "unit"
+  },
+  {
+   "id": "Electronics",
+   "name": "Electronics",
+   "kind": "unit"
+  },
+  {
+   "id": "Construction Parts II",
+   "name": "Construction Parts II",
+   "kind": "unit"
+  },
+  {
+   "id": "Construction Parts III",
+   "name": "Construction Parts III",
+   "kind": "unit"
+  },
+  {
+   "id": "Electronics II",
+   "name": "Electronics II",
+   "kind": "unit"
+  },
+  {
+   "id": "Construction Parts IV",
+   "name": "Construction Parts IV",
+   "kind": "unit"
+  },
+  {
+   "id": "Rubber",
+   "name": "Rubber",
+   "kind": "unit"
+  },
+  {
+   "id": "Copper",
+   "name": "Copper",
+   "kind": "unit"
+  },
+  {
+   "id": "PCB",
+   "name": "PCB",
+   "kind": "unit"
+  },
+  {
+   "id": "Polysilicon",
+   "name": "Polysilicon",
+   "kind": "loose"
+  },
+  {
+   "id": "Glass",
+   "name": "Glass",
+   "kind": "unit"
+  },
+  {
+   "id": "Plastic",
+   "name": "Plastic",
+   "kind": "unit"
+  },
+  {
+   "id": "Mechanical Parts",
+   "name": "Mechanical Parts",
+   "kind": "unit"
+  },
+  {
+   "id": "Iron Ore",
+   "name": "Iron Ore",
+   "kind": "loose"
+  },
+  {
+   "id": "Coal",
+   "name": "Coal",
+   "kind": "loose"
+  },
+  {
+   "id": "Molten Iron",
+   "name": "Molten Iron",
+   "kind": "molten"
+  },
+  {
+   "id": "Slag",
+   "name": "Slag",
+   "kind": "loose"
+  },
+  {
+   "id": "Exhaust",
+   "name": "Exhaust",
+   "kind": "fluid"
+  },
+  {
+   "id": "Iron Scrap",
+   "name": "Iron Scrap",
+   "kind": "loose"
+  },
+  {
+   "id": "Iron Ore Crushed",
+   "name": "Iron Ore Crushed",
+   "kind": "loose"
+  },
+  {
+   "id": "Limestone",
+   "name": "Limestone",
+   "kind": "loose"
+  },
+  {
+   "id": "Graphite",
+   "name": "Graphite",
+   "kind": "loose"
+  },
+  {
+   "id": "Copper Ore",
+   "name": "Copper Ore",
+   "kind": "loose"
+  },
+  {
+   "id": "Molten Copper",
+   "name": "Molten Copper",
+   "kind": "molten"
+  },
+  {
+   "id": "Copper Scrap",
+   "name": "Copper Scrap",
+   "kind": "loose"
+  },
+  {
+   "id": "Glass Mix",
+   "name": "Glass Mix",
+   "kind": "loose"
+  },
+  {
+   "id": "Molten Glass",
+   "name": "Molten Glass",
+   "kind": "molten"
+  },
+  {
+   "id": "Broken Glass",
+   "name": "Broken Glass",
+   "kind": "loose"
+  },
+  {
+   "id": "Impure Copper",
+   "name": "Impure Copper",
+   "kind": "unit"
+  },
+  {
+   "id": "Acid",
+   "name": "Acid",
+   "kind": "fluid"
+  },
+  {
+   "id": "Water",
+   "name": "Water",
+   "kind": "fluid"
+  },
+  {
+   "id": "Oxygen",
+   "name": "Oxygen",
+   "kind": "fluid"
+  },
+  {
+   "id": "Molten Steel",
+   "name": "Molten Steel",
+   "kind": "molten"
+  },
+  {
+   "id": "Nitrogen",
+   "name": "Nitrogen",
+   "kind": "fluid"
+  },
+  {
+   "id": "Sand",
+   "name": "Sand",
+   "kind": "loose"
+  },
+  {
+   "id": "Salt",
+   "name": "Salt",
+   "kind": "loose"
+  },
+  {
+   "id": "Slag Crushed",
+   "name": "Slag Crushed",
+   "kind": "loose"
+  },
+  {
+   "id": "Cement",
+   "name": "Cement",
+   "kind": "loose"
+  },
+  {
+   "id": "Gravel",
+   "name": "Gravel",
+   "kind": "loose"
+  },
+  {
+   "id": "Diesel",
+   "name": "Diesel",
+   "kind": "fluid"
+  },
+  {
+   "id": "Sulfur",
+   "name": "Sulfur",
+   "kind": "loose"
+  },
+  {
+   "id": "Crude Oil",
+   "name": "Crude Oil",
+   "kind": "fluid"
+  },
+  {
+   "id": "Waste Water",
+   "name": "Waste Water",
+   "kind": "fluid"
+  },
+  {
+   "id": "Naphtha",
+   "name": "Naphtha",
+   "kind": "fluid"
+  },
+  {
+   "id": "Chlorine",
+   "name": "Chlorine",
+   "kind": "fluid"
+  },
+  {
+   "id": "Vehicle Parts",
+   "name": "Vehicle Parts",
+   "kind": "unit"
+  },
+  {
+   "id": "Vehicle Parts II",
+   "name": "Vehicle Parts II",
+   "kind": "unit"
+  },
+  {
+   "id": "Vehicle Parts III",
+   "name": "Vehicle Parts III",
+   "kind": "unit"
+  }
+ ],
+ "machines": [
+  {
+   "id": "Assembly I",
+   "name": "Assembly I",
+   "family": "Assembly",
+   "tier": 1
+  },
+  {
+   "id": "Assembly II",
+   "name": "Assembly II",
+   "family": "Assembly",
+   "tier": 2
+  },
+  {
+   "id": "Assembly III",
+   "name": "Assembly III",
+   "family": "Assembly",
+   "tier": 3
+  },
+  {
+   "id": "Assembly IV",
+   "name": "Assembly IV",
+   "family": "Assembly",
+   "tier": 4
+  },
+  {
+   "id": "Assembly V",
+   "name": "Assembly V",
+   "family": "Assembly",
+   "tier": 5
+  },
+  {
+   "id": "Blast Furnace",
+   "name": "Blast Furnace",
+   "family": "Blast Furnace",
+   "tier": 1
+  },
+  {
+   "id": "Blast Furnace II",
+   "name": "Blast Furnace II",
+   "family": "Blast Furnace",
+   "tier": 2
+  },
+  {
+   "id": "Arc Furnace",
+   "name": "Arc Furnace",
+   "family": "Arc Furnace",
+   "tier": 1
+  },
+  {
+   "id": "Metal Caster",
+   "name": "Metal Caster",
+   "family": "Metal Caster",
+   "tier": 1
+  },
+  {
+   "id": "Metal Caster II",
+   "name": "Metal Caster II",
+   "family": "Metal Caster",
+   "tier": 2
+  },
+  {
+   "id": "Copper Electrolysis",
+   "name": "Copper Electrolysis",
+   "family": "Copper Electrolysis",
+   "tier": 1
+  },
+  {
+   "id": "Oxygen Furnace",
+   "name": "Oxygen Furnace",
+   "family": "Oxygen Furnace",
+   "tier": 1
+  },
+  {
+   "id": "Oxygen Furnace II",
+   "name": "Oxygen Furnace II",
+   "family": "Oxygen Furnace",
+   "tier": 2
+  },
+  {
+   "id": "Cooled Caster",
+   "name": "Cooled Caster",
+   "family": "Cooled Caster",
+   "tier": 1
+  },
+  {
+   "id": "Cooled Caster II",
+   "name": "Cooled Caster II",
+   "family": "Cooled Caster",
+   "tier": 2
+  },
+  {
+   "id": "Air Separator",
+   "name": "Air Separator",
+   "family": "Air Separator",
+   "tier": 1
+  },
+  {
+   "id": "Glass Maker",
+   "name": "Glass Maker",
+   "family": "Glass Maker",
+   "tier": 1
+  },
+  {
+   "id": "Glass Maker II",
+   "name": "Glass Maker II",
+   "family": "Glass Maker",
+   "tier": 2
+  },
+  {
+   "id": "Mixer",
+   "name": "Mixer",
+   "family": "Mixer",
+   "tier": 1
+  },
+  {
+   "id": "Mixer II",
+   "name": "Mixer II",
+   "family": "Mixer",
+   "tier": 2
+  },
+  {
+   "id": "Crusher",
+   "name": "Crusher",
+   "family": "Crusher",
+   "tier": 1
+  },
+  {
+   "id": "Rotary Kiln",
+   "name": "Rotary Kiln",
+   "family": "Rotary Kiln",
+   "tier": 1
+  },
+  {
+   "id": "Concrete Mixer",
+   "name": "Concrete Mixer",
+   "family": "Concrete Mixer",
+   "tier": 1
+  },
+  {
+   "id": "Concrete Mixer II",
+   "name": "Concrete Mixer II",
+   "family": "Concrete Mixer",
+   "tier": 2
+  },
+  {
+   "id": "Concrete Mixer III",
+   "name": "Concrete Mixer III",
+   "family": "Concrete Mixer",
+   "tier": 3
+  },
+  {
+   "id": "Rubber Maker",
+   "name": "Rubber Maker",
+   "family": "Rubber Maker",
+   "tier": 1
+  },
+  {
+   "id": "Basic Distiller",
+   "name": "Basic Distiller",
+   "family": "Basic Distiller",
+   "tier": 1
+  },
+  {
+   "id": "Polymerization Plant",
+   "name": "Polymerization Plant",
+   "family": "Polymerization Plant",
+   "tier": 1
+  }
+ ],
+ "recipes": [
+  {
+   "id": "r000_assembly_i_construction_parts",
+   "machineId": "Assembly I",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 3
+    },
+    {
+     "product": "Wood",
+     "qty": 3
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r001_assembly_ii_construction_parts",
+   "machineId": "Assembly II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 3
+    },
+    {
+     "product": "Wood",
+     "qty": 3
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r002_assembly_iii_construction_parts",
+   "machineId": "Assembly III",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 3
+    },
+    {
+     "product": "Wood",
+     "qty": 3
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r003_assembly_iv_construction_parts",
+   "machineId": "Assembly IV",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 6
+    },
+    {
+     "product": "Wood",
+     "qty": 6
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 8
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r004_assembly_v_construction_parts",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 12
+    },
+    {
+     "product": "Wood",
+     "qty": 12
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 16
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 16
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r005_assembly_iii_construction_parts",
+   "machineId": "Assembly III",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 2
+    },
+    {
+     "product": "Wood",
+     "qty": 2
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r006_assembly_iv_construction_parts",
+   "machineId": "Assembly IV",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 4
+    },
+    {
+     "product": "Wood",
+     "qty": 4
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 8
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r007_assembly_v_construction_parts",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 8
+    },
+    {
+     "product": "Wood",
+     "qty": 8
+    },
+    {
+     "product": "Concrete Slab",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 16
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r008_assembly_i_construction_parts_ii",
+   "machineId": "Assembly I",
+   "durationSec": 80,
+   "inputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 6
+    },
+    {
+     "product": "Electronics",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 3
+    }
+   ]
+  },
+  {
+   "id": "r009_assembly_ii_construction_parts_ii",
+   "machineId": "Assembly II",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 12
+    },
+    {
+     "product": "Electronics",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 6
+    }
+   ]
+  },
+  {
+   "id": "r010_assembly_iii_construction_parts_ii",
+   "machineId": "Assembly III",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 24
+    },
+    {
+     "product": "Electronics",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r011_assembly_iv_construction_parts_ii",
+   "machineId": "Assembly IV",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 48
+    },
+    {
+     "product": "Electronics",
+     "qty": 24
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 24
+    }
+   ]
+  },
+  {
+   "id": "r012_assembly_v_construction_parts_ii",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Construction Parts",
+     "qty": 96
+    },
+    {
+     "product": "Electronics",
+     "qty": 48
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 48
+    }
+   ]
+  },
+  {
+   "id": "r013_assembly_ii_construction_parts_iii",
+   "machineId": "Assembly II",
+   "durationSec": 80,
+   "inputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 6
+    },
+    {
+     "product": "Steel",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 3
+    }
+   ]
+  },
+  {
+   "id": "r014_assembly_iii_construction_parts_iii",
+   "machineId": "Assembly III",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 12
+    },
+    {
+     "product": "Steel",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 6
+    }
+   ]
+  },
+  {
+   "id": "r015_assembly_iv_construction_parts_iii",
+   "machineId": "Assembly IV",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 24
+    },
+    {
+     "product": "Steel",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r016_assembly_v_construction_parts_iii",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Construction Parts II",
+     "qty": 48
+    },
+    {
+     "product": "Steel",
+     "qty": 24
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 24
+    }
+   ]
+  },
+  {
+   "id": "r017_assembly_iii_construction_parts_iv",
+   "machineId": "Assembly III",
+   "durationSec": 80,
+   "inputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 6
+    },
+    {
+     "product": "Electronics II",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts IV",
+     "qty": 3
+    }
+   ]
+  },
+  {
+   "id": "r018_assembly_iv_construction_parts_iv",
+   "machineId": "Assembly IV",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 12
+    },
+    {
+     "product": "Electronics II",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts IV",
+     "qty": 6
+    }
+   ]
+  },
+  {
+   "id": "r019_assembly_v_construction_parts_iv",
+   "machineId": "Assembly V",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Construction Parts III",
+     "qty": 24
+    },
+    {
+     "product": "Electronics II",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Construction Parts IV",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r020_assembly_i_electronics",
+   "machineId": "Assembly I",
+   "durationSec": 60,
+   "inputs": [
+    {
+     "product": "Rubber",
+     "qty": 1
+    },
+    {
+     "product": "Copper",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics",
+     "qty": 6
+    }
+   ]
+  },
+  {
+   "id": "r021_assembly_ii_electronics",
+   "machineId": "Assembly II",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Rubber",
+     "qty": 2
+    },
+    {
+     "product": "Copper",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r022_assembly_iii_electronics",
+   "machineId": "Assembly III",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Rubber",
+     "qty": 4
+    },
+    {
+     "product": "Copper",
+     "qty": 24
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics",
+     "qty": 24
+    }
+   ]
+  },
+  {
+   "id": "r023_assembly_iv_electronics",
+   "machineId": "Assembly IV",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Rubber",
+     "qty": 8
+    },
+    {
+     "product": "Copper",
+     "qty": 48
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics",
+     "qty": 48
+    }
+   ]
+  },
+  {
+   "id": "r024_assembly_v_electronics",
+   "machineId": "Assembly V",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Rubber",
+     "qty": 16
+    },
+    {
+     "product": "Copper",
+     "qty": 96
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics",
+     "qty": 96
+    }
+   ]
+  },
+  {
+   "id": "r025_assembly_iii_electronics_ii",
+   "machineId": "Assembly III",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "PCB",
+     "qty": 4
+    },
+    {
+     "product": "Electronics",
+     "qty": 8
+    },
+    {
+     "product": "Polysilicon",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics II",
+     "qty": 4
+    }
+   ]
+  },
+  {
+   "id": "r026_assembly_iv_electronics_ii",
+   "machineId": "Assembly IV",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "PCB",
+     "qty": 4
+    },
+    {
+     "product": "Electronics",
+     "qty": 8
+    },
+    {
+     "product": "Polysilicon",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics II",
+     "qty": 4
+    }
+   ]
+  },
+  {
+   "id": "r027_assembly_v_electronics_ii",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "PCB",
+     "qty": 4
+    },
+    {
+     "product": "Electronics",
+     "qty": 8
+    },
+    {
+     "product": "Polysilicon",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Electronics II",
+     "qty": 4
+    }
+   ]
+  },
+  {
+   "id": "r028_assembly_iii_pcb",
+   "machineId": "Assembly III",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Glass",
+     "qty": 2
+    },
+    {
+     "product": "Plastic",
+     "qty": 4
+    },
+    {
+     "product": "Copper",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "PCB",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r029_assembly_iv_pcb",
+   "machineId": "Assembly IV",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Glass",
+     "qty": 2
+    },
+    {
+     "product": "Plastic",
+     "qty": 4
+    },
+    {
+     "product": "Copper",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "PCB",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r030_assembly_v_pcb",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Glass",
+     "qty": 2
+    },
+    {
+     "product": "Plastic",
+     "qty": 4
+    },
+    {
+     "product": "Copper",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "PCB",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r031_assembly_i_mechanical_parts",
+   "machineId": "Assembly I",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 5
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r032_assembly_ii_mechanical_parts",
+   "machineId": "Assembly II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 5
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r033_assembly_iii_mechanical_parts",
+   "machineId": "Assembly III",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 5
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 4
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r034_assembly_iv_mechanical_parts",
+   "machineId": "Assembly IV",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 10
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 8
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r035_assembly_v_mechanical_parts",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Iron",
+     "qty": 20
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 16
+    }
+   ],
+   "label": "from Iron"
+  },
+  {
+   "id": "r036_assembly_iii_mechanical_parts",
+   "machineId": "Assembly III",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 8
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r037_assembly_iv_mechanical_parts",
+   "machineId": "Assembly IV",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 8
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r038_assembly_v_mechanical_parts",
+   "machineId": "Assembly V",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Steel",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 16
+    }
+   ],
+   "label": "from Steel"
+  },
+  {
+   "id": "r039_blast_furnace_molten_iron",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron Ore",
+     "qty": 10
+    },
+    {
+     "product": "Coal",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 8
+    },
+    {
+     "product": "Slag",
+     "qty": 4
+    },
+    {
+     "product": "Exhaust",
+     "qty": 8
+    }
+   ],
+   "label": "Iron Ore"
+  },
+  {
+   "id": "r040_blast_furnace_molten_iron",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron Scrap",
+     "qty": 8
+    },
+    {
+     "product": "Coal",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 8
+    },
+    {
+     "product": "Exhaust",
+     "qty": 6
+    }
+   ],
+   "label": "Iron Scrap"
+  },
+  {
+   "id": "r041_blast_furnace_ii_molten_iron",
+   "machineId": "Blast Furnace II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron Ore Crushed",
+     "qty": 16
+    },
+    {
+     "product": "Limestone",
+     "qty": 2
+    },
+    {
+     "product": "Coal",
+     "qty": 5
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 16
+    },
+    {
+     "product": "Slag",
+     "qty": 6
+    },
+    {
+     "product": "Exhaust",
+     "qty": 12
+    }
+   ],
+   "label": "Crushed ore"
+  },
+  {
+   "id": "r042_blast_furnace_ii_molten_iron",
+   "machineId": "Blast Furnace II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron Scrap",
+     "qty": 16
+    },
+    {
+     "product": "Coal",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 16
+    },
+    {
+     "product": "Exhaust",
+     "qty": 9
+    }
+   ],
+   "label": "Iron Scrap"
+  },
+  {
+   "id": "r043_arc_furnace_molten_iron",
+   "machineId": "Arc Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Iron Ore Crushed",
+     "qty": 8
+    },
+    {
+     "product": "Limestone",
+     "qty": 1
+    },
+    {
+     "product": "Graphite",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 8
+    },
+    {
+     "product": "Slag",
+     "qty": 3
+    },
+    {
+     "product": "Exhaust",
+     "qty": 2
+    }
+   ],
+   "label": "Crushed ore"
+  },
+  {
+   "id": "r044_blast_furnace_molten_copper",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Copper Ore",
+     "qty": 10
+    },
+    {
+     "product": "Coal",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Copper",
+     "qty": 8
+    },
+    {
+     "product": "Slag",
+     "qty": 4
+    },
+    {
+     "product": "Exhaust",
+     "qty": 8
+    }
+   ],
+   "label": "Copper Ore"
+  },
+  {
+   "id": "r045_blast_furnace_molten_copper",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Copper Scrap",
+     "qty": 8
+    },
+    {
+     "product": "Coal",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Copper",
+     "qty": 8
+    },
+    {
+     "product": "Exhaust",
+     "qty": 6
+    }
+   ],
+   "label": "Copper Scrap"
+  },
+  {
+   "id": "r046_blast_furnace_molten_glass",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Glass Mix",
+     "qty": 10
+    },
+    {
+     "product": "Coal",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Glass",
+     "qty": 8
+    },
+    {
+     "product": "Slag",
+     "qty": 4
+    },
+    {
+     "product": "Exhaust",
+     "qty": 8
+    }
+   ],
+   "label": "Glass Mix"
+  },
+  {
+   "id": "r047_blast_furnace_molten_glass",
+   "machineId": "Blast Furnace",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Broken Glass",
+     "qty": 12
+    },
+    {
+     "product": "Coal",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Glass",
+     "qty": 8
+    },
+    {
+     "product": "Exhaust",
+     "qty": 6
+    }
+   ],
+   "label": "Broken Glass"
+  },
+  {
+   "id": "r048_metal_caster_iron",
+   "machineId": "Metal Caster",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Iron",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r049_metal_caster_ii_iron",
+   "machineId": "Metal Caster II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Iron",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r050_metal_caster_impure_copper",
+   "machineId": "Metal Caster",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Molten Copper",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Impure Copper",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r051_metal_caster_ii_impure_copper",
+   "machineId": "Metal Caster II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Molten Copper",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Impure Copper",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r052_copper_electrolysis_copper",
+   "machineId": "Copper Electrolysis",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Impure Copper",
+     "qty": 24
+    },
+    {
+     "product": "Acid",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Copper",
+     "qty": 16
+    }
+   ],
+   "label": "with Acid"
+  },
+  {
+   "id": "r053_copper_electrolysis_copper",
+   "machineId": "Copper Electrolysis",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Impure Copper",
+     "qty": 24
+    },
+    {
+     "product": "Water",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Copper",
+     "qty": 13
+    }
+   ],
+   "label": "with Water"
+  },
+  {
+   "id": "r054_oxygen_furnace_molten_steel",
+   "machineId": "Oxygen Furnace",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 16
+    },
+    {
+     "product": "Oxygen",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Steel",
+     "qty": 8
+    },
+    {
+     "product": "Exhaust",
+     "qty": 16
+    }
+   ]
+  },
+  {
+   "id": "r055_oxygen_furnace_ii_molten_steel",
+   "machineId": "Oxygen Furnace II",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Molten Iron",
+     "qty": 32
+    },
+    {
+     "product": "Oxygen",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Molten Steel",
+     "qty": 16
+    },
+    {
+     "product": "Exhaust",
+     "qty": 24
+    }
+   ]
+  },
+  {
+   "id": "r056_cooled_caster_steel",
+   "machineId": "Cooled Caster",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Molten Steel",
+     "qty": 12
+    },
+    {
+     "product": "Water",
+     "qty": 6
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Steel",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r057_cooled_caster_ii_steel",
+   "machineId": "Cooled Caster II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Molten Steel",
+     "qty": 24
+    },
+    {
+     "product": "Water",
+     "qty": 12
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Steel",
+     "qty": 24
+    }
+   ]
+  },
+  {
+   "id": "r058_air_separator_oxygen",
+   "machineId": "Air Separator",
+   "durationSec": 20,
+   "inputs": [],
+   "outputs": [
+    {
+     "product": "Oxygen",
+     "qty": 12
+    },
+    {
+     "product": "Nitrogen",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r059_glass_maker_glass",
+   "machineId": "Glass Maker",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Molten Glass",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Glass",
+     "qty": 4
+    },
+    {
+     "product": "Broken Glass",
+     "qty": 4
+    }
+   ]
+  },
+  {
+   "id": "r060_glass_maker_ii_glass",
+   "machineId": "Glass Maker II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Molten Glass",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Glass",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r061_mixer_glass_mix",
+   "machineId": "Mixer",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Sand",
+     "qty": 20
+    },
+    {
+     "product": "Limestone",
+     "qty": 5
+    },
+    {
+     "product": "Salt",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Glass Mix",
+     "qty": 20
+    }
+   ],
+   "label": "no Acid"
+  },
+  {
+   "id": "r062_mixer_ii_glass_mix",
+   "machineId": "Mixer II",
+   "durationSec": 10,
+   "inputs": [
+    {
+     "product": "Sand",
+     "qty": 20
+    },
+    {
+     "product": "Limestone",
+     "qty": 5
+    },
+    {
+     "product": "Salt",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Glass Mix",
+     "qty": 20
+    }
+   ],
+   "label": "no Acid"
+  },
+  {
+   "id": "r063_crusher_iron_ore_crushed",
+   "machineId": "Crusher",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Iron Ore",
+     "qty": 16
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Iron Ore Crushed",
+     "qty": 16
+    }
+   ]
+  },
+  {
+   "id": "r064_crusher_slag_crushed",
+   "machineId": "Crusher",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Slag",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Slag Crushed",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r065_rotary_kiln_cement",
+   "machineId": "Rotary Kiln",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Limestone",
+     "qty": 6
+    },
+    {
+     "product": "Coal",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Cement",
+     "qty": 2
+    },
+    {
+     "product": "Exhaust",
+     "qty": 6
+    }
+   ]
+  },
+  {
+   "id": "r066_concrete_mixer_concrete_slab",
+   "machineId": "Concrete Mixer",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 1
+    },
+    {
+     "product": "Sand",
+     "qty": 2
+    },
+    {
+     "product": "Gravel",
+     "qty": 6
+    },
+    {
+     "product": "Water",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 8
+    }
+   ],
+   "label": "Gravel"
+  },
+  {
+   "id": "r067_concrete_mixer_concrete_slab",
+   "machineId": "Concrete Mixer",
+   "durationSec": 40,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 1
+    },
+    {
+     "product": "Sand",
+     "qty": 2
+    },
+    {
+     "product": "Slag Crushed",
+     "qty": 6
+    },
+    {
+     "product": "Water",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 8
+    }
+   ],
+   "label": "Crushed slag"
+  },
+  {
+   "id": "r068_concrete_mixer_ii_concrete_slab",
+   "machineId": "Concrete Mixer II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 1
+    },
+    {
+     "product": "Sand",
+     "qty": 2
+    },
+    {
+     "product": "Gravel",
+     "qty": 6
+    },
+    {
+     "product": "Water",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 8
+    }
+   ],
+   "label": "Gravel"
+  },
+  {
+   "id": "r069_concrete_mixer_ii_concrete_slab",
+   "machineId": "Concrete Mixer II",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 1
+    },
+    {
+     "product": "Sand",
+     "qty": 2
+    },
+    {
+     "product": "Slag Crushed",
+     "qty": 6
+    },
+    {
+     "product": "Water",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 8
+    }
+   ],
+   "label": "Crushed slag"
+  },
+  {
+   "id": "r070_concrete_mixer_iii_concrete_slab",
+   "machineId": "Concrete Mixer III",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 2
+    },
+    {
+     "product": "Sand",
+     "qty": 4
+    },
+    {
+     "product": "Gravel",
+     "qty": 12
+    },
+    {
+     "product": "Water",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 16
+    }
+   ],
+   "label": "Gravel"
+  },
+  {
+   "id": "r071_concrete_mixer_iii_concrete_slab",
+   "machineId": "Concrete Mixer III",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Cement",
+     "qty": 2
+    },
+    {
+     "product": "Sand",
+     "qty": 4
+    },
+    {
+     "product": "Slag Crushed",
+     "qty": 12
+    },
+    {
+     "product": "Water",
+     "qty": 8
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Concrete Slab",
+     "qty": 16
+    }
+   ],
+   "label": "Crushed slag"
+  },
+  {
+   "id": "r072_rubber_maker_rubber",
+   "machineId": "Rubber Maker",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Diesel",
+     "qty": 8
+    },
+    {
+     "product": "Coal",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Rubber",
+     "qty": 8
+    }
+   ],
+   "label": "Diesel + Coal"
+  },
+  {
+   "id": "r073_rubber_maker_rubber",
+   "machineId": "Rubber Maker",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Diesel",
+     "qty": 12
+    },
+    {
+     "product": "Sulfur",
+     "qty": 3
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Rubber",
+     "qty": 8
+    }
+   ],
+   "label": "Diesel + Sulfur"
+  },
+  {
+   "id": "r074_basic_distiller_diesel",
+   "machineId": "Basic Distiller",
+   "durationSec": 20,
+   "inputs": [
+    {
+     "product": "Crude Oil",
+     "qty": 20
+    },
+    {
+     "product": "Coal",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Diesel",
+     "qty": 9
+    },
+    {
+     "product": "Waste Water",
+     "qty": 5
+    },
+    {
+     "product": "Exhaust",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r075_polymerization_plant_plastic",
+   "machineId": "Polymerization Plant",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Naphtha",
+     "qty": 6
+    },
+    {
+     "product": "Chlorine",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Plastic",
+     "qty": 18
+    },
+    {
+     "product": "Exhaust",
+     "qty": 12
+    }
+   ]
+  },
+  {
+   "id": "r076_assembly_i_vehicle_parts",
+   "machineId": "Assembly I",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 3
+    },
+    {
+     "product": "Electronics",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r077_assembly_ii_vehicle_parts",
+   "machineId": "Assembly II",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 3
+    },
+    {
+     "product": "Electronics",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r078_assembly_iii_vehicle_parts",
+   "machineId": "Assembly III",
+   "durationSec": 8,
+   "inputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 3
+    },
+    {
+     "product": "Electronics",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r079_assembly_iv_vehicle_parts",
+   "machineId": "Assembly IV",
+   "durationSec": 8,
+   "inputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 6
+    },
+    {
+     "product": "Electronics",
+     "qty": 2
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 4
+    }
+   ]
+  },
+  {
+   "id": "r080_assembly_v_vehicle_parts",
+   "machineId": "Assembly V",
+   "durationSec": 8,
+   "inputs": [
+    {
+     "product": "Mechanical Parts",
+     "qty": 12
+    },
+    {
+     "product": "Electronics",
+     "qty": 4
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 8
+    }
+   ]
+  },
+  {
+   "id": "r081_assembly_iii_vehicle_parts_ii",
+   "machineId": "Assembly III",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 4
+    },
+    {
+     "product": "Steel",
+     "qty": 2
+    },
+    {
+     "product": "Glass",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r082_assembly_iv_vehicle_parts_ii",
+   "machineId": "Assembly IV",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 4
+    },
+    {
+     "product": "Steel",
+     "qty": 2
+    },
+    {
+     "product": "Glass",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r083_assembly_v_vehicle_parts_ii",
+   "machineId": "Assembly V",
+   "durationSec": 8,
+   "inputs": [
+    {
+     "product": "Vehicle Parts",
+     "qty": 4
+    },
+    {
+     "product": "Steel",
+     "qty": 2
+    },
+    {
+     "product": "Glass",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r084_assembly_iii_vehicle_parts_iii",
+   "machineId": "Assembly III",
+   "durationSec": 30,
+   "inputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 4
+    },
+    {
+     "product": "Electronics II",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts III",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r085_assembly_iv_vehicle_parts_iii",
+   "machineId": "Assembly IV",
+   "durationSec": 15,
+   "inputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 4
+    },
+    {
+     "product": "Electronics II",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts III",
+     "qty": 2
+    }
+   ]
+  },
+  {
+   "id": "r086_assembly_v_vehicle_parts_iii",
+   "machineId": "Assembly V",
+   "durationSec": 8,
+   "inputs": [
+    {
+     "product": "Vehicle Parts II",
+     "qty": 4
+    },
+    {
+     "product": "Electronics II",
+     "qty": 1
+    }
+   ],
+   "outputs": [
+    {
+     "product": "Vehicle Parts III",
+     "qty": 2
+    }
+   ]
+  }
+ ],
+ "transports": [
+  {
+   "id": "belt_1",
+   "name": "Belt I",
+   "tier": 1,
+   "kind": "belt",
+   "throughputPerMin": 60
+  },
+  {
+   "id": "belt_2",
+   "name": "Belt II",
+   "tier": 2,
+   "kind": "belt",
+   "throughputPerMin": 200
+  },
+  {
+   "id": "belt_3",
+   "name": "Belt III",
+   "tier": 3,
+   "kind": "belt",
+   "throughputPerMin": 450
+  }
+ ],
+ "storages": [
+  {
+   "id": "unit_storage_1",
+   "name": "Unit Storage",
+   "tier": 1,
+   "kind": "unit",
+   "capacity": 0,
+   "transferPerMin": 400
+  },
+  {
+   "id": "unit_storage_2",
+   "name": "Unit Storage II",
+   "tier": 2,
+   "kind": "unit",
+   "capacity": 0,
+   "transferPerMin": 900
+  }
+ ]
+}
