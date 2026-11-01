@@ -1,30 +1,31 @@
-// Minimal shell: a first-cut flex loop designer wired to the engine. The full UI comes in M3-M5.
-import data from "../data/0.8.1a-b550-Update-4/gamedata.json";
-import lines from "../data/0.8.1a-b550-Update-4/lines.json";
-import { engine, fullMatrix, type Design, type ProductLine } from "./engine/flexloop";
-import type { GameData } from "./data/schema";
+import "./style.css";
+import { mountChain } from "./ui/chainView";
+import { mountData } from "./ui/dataView";
+import { mountDesign } from "./ui/designView";
+import { loadActive } from "./ui/store";
+import { BUNDLED } from "./ui/store";
 
-const G = data as unknown as GameData, LS = lines as ProductLine[];
+let active = loadActive();
+const getData = () => active.data;
+
 const app = document.getElementById("app")!;
-app.innerHTML = `<style>body{font:15px system-ui;margin:16px;max-width:760px}label{display:block;margin:6px 0}</style>
-<h1>Captain of Industry Planner</h1><p>Game data: <b>${G.meta.gameVersion}</b> (${G.recipes.length} recipes). Early build: flex loop result only.</p>
-<label>Line <select id="l">${LS.map((l) => `<option>${l.id}</option>`).join("")}</select></label>
-<label>Assembler <select id="t">${["I","II","III","IV","V"].map((x, i) => `<option value="${(LS[0] as any).assemblers[i]}"${i === 2 ? " selected" : ""}>Assembly ${x}</option>`).join("")}</select></label>
-<label>Count <input id="n" type="number" value="8" min="1" max="24"></label>
-<label>Belt <select id="b"><option value="199.80468">Belt II</option><option value="450">Belt III</option></select></label>
-<label>Final tier <select id="top"><option value="1">2nd</option><option value="2" selected>3rd</option><option value="3">4th</option></select></label>
-<label>Mode <select id="m"><option value="phases">Priority phases</option><option value="blend">Throttled</option></select></label>
-<pre id="out"></pre>`;
-const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
-function run() {
-  const L = LS.find((l) => l.id === $<HTMLSelectElement>("l").value)!, cp = L.id === "CP";
-  const n = Math.max(1, +$<HTMLInputElement>("n").value || 1);
-  const D: Design = { line: L.id, tier: $<HTMLSelectElement>("t").value, n, belt: +$<HTMLSelectElement>("b").value, store: 400,
-    top: +$<HTMLSelectElement>("top").value, variant: cp ? "from Iron" : "from Steel", mode: $<HTMLSelectElement>("m").value as Design["mode"],
-    src: cp ? ["make","make","make","make"] : ["import","make","make","make"], merge: cp ? ["one","best","best","best"] : ["best","best","best","best"],
-    matrix: fullMatrix(n, L.tiers.length) };
-  const r = engine(G, L, D);
-  $("out").textContent = (r.bad ? "" : `${L.tiers[D.top].short}: ${r.W.toFixed(2)} / min  (max possible ${r.Wbl.toFixed(2)}, assemblers busy ${(r.busy * 100).toFixed(0)}%)\nFeed from outside: ${Object.entries(r.feeds).map(([k, v]) => `${k} ${v.toFixed(1)}`).join(", ")}\n\n`)
-    + r.issues.map((i) => `[${i.sev}] ${i.msg}`).join("\n");
+app.innerHTML = `<div class="wrap"><header><h1><small>Captain of Industry · Blueprint aid</small>Factory Planner</h1>
+  <div class="tabs" role="tablist"><button role="tab" data-t="chain">Production chain</button><button role="tab" data-t="design">Factory designer</button><button role="tab" data-t="data">Game data</button></div></header>
+  <div id="stale"></div><section id="v-chain"></section><section id="v-design" hidden></section><section id="v-data" hidden></section></div>`;
+const views = { chain: mountChain(document.getElementById("v-chain")!, getData), design: mountDesign(document.getElementById("v-design")!, getData),
+  data: mountData(document.getElementById("v-data")!, getData, () => active.user, () => { active = loadActive(); refresh(); }) };
+
+function refresh() {
+  const d = active.data;
+  document.getElementById("stale")!.innerHTML = !active.user && d === BUNDLED
+    ? `<div class="box warn">Using bundled data for game <b>${d.meta.gameVersion}</b>. The game has been updated since (2026-09-23), so recipes may be out of date. Import your own export on the <b>Game data</b> tab.</div>` : "";
+  (Object.keys(views) as (keyof typeof views)[]).forEach((k) => views[k]());
 }
-app.addEventListener("input", run); run();
+function show(t: keyof typeof views) {
+  document.querySelectorAll<HTMLElement>("[data-t]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === t)));
+  (Object.keys(views) as string[]).forEach((k) => (document.getElementById("v-" + k)!.hidden = k !== t));
+  history.replaceState(null, "", "#" + t);
+}
+document.querySelectorAll<HTMLElement>("[data-t]").forEach((b) => (b.onclick = () => show(b.dataset.t as keyof typeof views)));
+refresh();
+show((["chain", "design", "data"].find((t) => location.hash === "#" + t) ?? "chain") as keyof typeof views);

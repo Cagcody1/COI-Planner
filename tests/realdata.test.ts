@@ -17,7 +17,7 @@ describe(`in-game export ${DIR}`, () => {
     for (const r of cp) {
       const q = Object.fromEntries(r.inputs.map((s) => [s.product, s.qty]));
       expect(q.Iron / 3).toBe(q.Wood / 3);
-      expect(q.ConcreteSlab / 4).toBe(q.Iron / 3);
+      expect(q["Concrete slab"] / 4).toBe(q.Iron / 3);
     }
   });
   it("belt rates are the in-game values", () => {

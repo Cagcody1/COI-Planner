@@ -19,12 +19,24 @@ npm run wiki:check    # cross-check recipes against wiki.coigame.com (needs netw
 | M1 data: schema + validator | done |
 | M1 data | `data/0.8.1a-b550-Update-4` is an in-game export (see Data). Wiki cross-check script is written but unrun (wiki unreachable from the build sandbox). Own C# exporter not needed unless the upstream one lags a patch |
 | M2 engine | rates, balancer, flex loop, issues, recursive chain solver, cost totals done and tested. Still to do: LP solver for cycles/recycling |
-| M3-M7 | not started (a minimal designer shell is in `src/main.ts`) |
+| M3 chain calculator UI | done (`src/ui/chainView.ts`) |
+| M4 factory designer UI | done for CP and VP lines (`src/ui/designView.ts`); no flow diagram yet |
+| M1/M7 data import + patch diff | done (`src/data/importCod.ts`, `diff.ts`, Game data tab) |
+| M5 layout, M6 save/share, LP solver | not started |
 
 Machine workers, power, maintenance, footprint and ports are optional in the schema and absent from the prototype data until the real export exists.
 
 ## Data
-- **Current set:** `data/0.8.1a-b550-Update-4/` (game 0.8.1a b550, Update 4): 700 recipes, 122 machines with workers/power/computing/maintenance/build cost, belt rates. Converted by `scripts/import-daxfb.ts` from [doubleaxe/daxfb-calculator](https://github.com/doubleaxe/daxfb-calculator) (MIT), which generates its data from the game with the [captain-of-data](https://github.com/doubleaxe/captain-of-data) mod. See `NOTICE.md` there.
-- **Not in that export:** footprints, port positions, storage transfer rates, and probabilistic outputs (waste sorting). Belt II is 199.80/min in game, not 200.
-- **Is it the latest game version?** It is the newest data I could find on GitHub, but I could not confirm the live game version (Steam, the wiki and coigame.com are blocked from the build sandbox). Check the version in game and re-import after a patch: `npx tsx scripts/import-daxfb.ts <daxfb-calculator>/data/coi`.
-- `data/prototype/` is the old hand-copied wiki table, kept only as a model regression fixture. Several of its upper-tier recipe quantities are wrong (e.g. Assembly III CP II is 12/min, not 36). `npx tsx scripts/section5-report.ts` prints the PLAN section 5 scenarios on both sets.
+**The bundled data is out of date.** It is game 0.8.1a (b550) Update 4, converted from [doubleaxe/daxfb-calculator](https://github.com/doubleaxe/daxfb-calculator) (MIT), which was generated in March 2026. The game has moved on: another project ([shuntianyifang/coi-balancer](https://github.com/shuntianyifang/coi-balancer), MIT, Oct 2026) targets **0.8.7d (Update 4, build 619)**, and the game was updated again on 2026-09-23. The app shows a warning while bundled data is in use.
+
+**Get current data from your own game** (Game data tab in the app, or `npx tsx scripts/import-cod.ts <dir>`):
+1. Build the exporter mod [doubleaxe/captain-of-data](https://github.com/doubleaxe/captain-of-data) (`mod/DataExtractor.csproj`, Visual Studio, set `COI_ROOT` to your game folder). It has no license file, so it is not copied into this repo. It was last updated for 0.8.1a, so it may need small fixes for newer versions; check that it still compiles.
+2. Put `DataExtractor.dll` in `%APPDATA%\Captain of Industry\Mods\DataExtractor`, load a save. It writes JSON to `c:\temp`.
+3. In the app pick `machines_and_buildings.json`, `products.json` and `transports.json`. The data is stored in your browser, and the page lists every recipe and machine that changed against the previous data.
+
+Format notes: product ids are in-game display names, machine ids are the game's ids, recipe ids are `<machine id>:<recipe id>`. Product lines (`data/<version>/lines.json`) refer to those names; after a patch the Game data tab reports any line whose products or assemblers no longer exist.
+
+Not in any export I found: footprints, port positions, storage transfer rates, probabilistic outputs (waste sorting). Trade contracts are never used as default recipes. Base resources (ores, wood, water, ...) are treated as raw inputs (`BASE_RESOURCES` in `src/engine/chain.ts`).
+
+`scripts/import-daxfb.ts` produced the bundled set; a cross-check of the exporter format against it matched all 640 shared recipe ids, 631 exactly (the 9 differences are research labs and the data center).
+`data/prototype/` is the old hand-copied wiki table, kept only as a model regression fixture; several of its upper-tier quantities are wrong. `npx tsx scripts/section5-report.ts` prints the PLAN section 5 scenarios on both sets.

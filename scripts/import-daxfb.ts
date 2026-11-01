@@ -14,7 +14,9 @@ const machineNames = new Set<string>(raw.recipeDictionaries.map((r: any) => r.na
 const kindOf = (t: number): ProductKind => ({ 5: "unit", 6: "loose", 4: "fluid", 7: "molten", 9: "virtual" } as Record<number, ProductKind>)[t] ?? "virtual";
 const products: Product[] = [...items.values()]
   .filter((i) => i.type !== undefined && !i.name.startsWith("Any") && !machineNames.has(i.name))
-  .map((i) => ({ id: i.name, name: i.label, kind: kindOf(i.type) }));
+  .map((i) => ({ id: i.label, name: i.label, kind: kindOf(i.type) }));
+// Product ids are display names, matching the in-game exporter format (see src/data/importCod.ts)
+const L = (n: string) => items.get(n)?.label ?? n;
 const productIds = new Set(products.map((p) => p.id));
 
 const OVERHEAD = (n: string) => n === "Worker" || n === "Electricity" || n === "Computing" || n.startsWith("Maintenance");
@@ -25,21 +27,21 @@ const machines: Machine[] = [], recipes: Recipe[] = [];
 for (const rd of raw.recipeDictionaries) {
   const item = items.get(rd.name);
   const m: Machine = { id: rd.name, name: item?.label ?? rd.name, family: familyOf(rd.name), tier: tierOf(rd.name) };
-  if (item?.cost) m.buildCost = item.cost.filter((c: any) => productIds.has(c.name)).map((c: any) => ({ product: c.name, qty: c.count }));
+  if (item?.cost) m.buildCost = item.cost.filter((c: any) => productIds.has(L(c.name))).map((c: any) => ({ product: L(c.name), qty: c.count }));
   for (const r of rd.recipes ?? []) {
     // abstract storage pseudo-recipes (AnyCountableProduct etc.) are not production recipes
     if ([...(r.input ?? []), ...(r.output ?? [])].some((io: any) => io.name.startsWith("Any"))) continue;
     const inputs: Stack[] = [];
     for (const io of r.input ?? []) {
       if (io.count <= 0) continue;
-      if (!OVERHEAD(io.name)) { inputs.push({ product: io.name, qty: io.count }); continue; }
+      if (!OVERHEAD(io.name)) { inputs.push({ product: L(io.name), qty: io.count }); continue; }
       if (io.name === "Worker") m.workers = Math.max(m.workers ?? 0, io.count);
       else if (io.name === "Electricity") m.electricityKw = Math.max(m.electricityKw ?? 0, io.count);
       else if (io.name === "Computing") m.computing = Math.max(m.computing ?? 0, io.count);
-      else if (!m.maintenance || io.count > m.maintenance.perMonth) m.maintenance = { product: io.name, perMonth: io.count };
+      else if (!m.maintenance || io.count > m.maintenance.perMonth) m.maintenance = { product: L(io.name), perMonth: io.count };
     }
     recipes.push({ id: `${rd.name}:${r.name}`, label: r.name, machineId: rd.name, durationSec: r.time ?? 1, inputs,
-      outputs: (r.output ?? []).filter((o: any) => o.count > 0).map((o: any) => ({ product: o.name, qty: o.count })) });
+      outputs: (r.output ?? []).filter((o: any) => o.count > 0).map((o: any) => ({ product: L(o.name), qty: o.count })) });
   }
   machines.push(m);
 }

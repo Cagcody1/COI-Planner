@@ -21,7 +21,7 @@ export interface Transport {
 }
 export interface Storage {
   id: string; name: string; tier: number; kind: string;
-  capacity: number; transferPerMin: number; ports?: Port[];
+  capacity: number; transferPerMin?: number; ports?: Port[];
 }
 export interface Meta { gameVersion: string; exportedAt: string; source: string }
 export interface GameData {
