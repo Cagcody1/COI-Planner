@@ -68,3 +68,14 @@ describe("diffData (what a patch changed)", () => {
     expect(d.changedMachines.map((x) => x.id)).toEqual(["PressT2"]);
   });
 });
+
+import { isOlderThanCurrent } from "../src/ui/store";
+describe("version check", () => {
+  it("compares against the current game version", () => {
+    expect(isOlderThanCurrent("0.8.1a(b550) - Update 4")).toBe(true);
+    expect(isOlderThanCurrent("0.8.1.0")).toBe(true);
+    expect(isOlderThanCurrent("0.8.7d")).toBe(false);
+    expect(isOlderThanCurrent("0.9.0")).toBe(false);
+    expect(isOlderThanCurrent("nonsense")).toBeNull();
+  });
+});

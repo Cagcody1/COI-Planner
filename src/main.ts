@@ -2,8 +2,7 @@ import "./style.css";
 import { mountChain } from "./ui/chainView";
 import { mountData } from "./ui/dataView";
 import { mountDesign } from "./ui/designView";
-import { loadActive } from "./ui/store";
-import { BUNDLED } from "./ui/store";
+import { BUNDLED, CURRENT_GAME, isOlderThanCurrent, loadActive } from "./ui/store";
 
 let active = loadActive();
 const getData = () => active.data;
@@ -17,8 +16,10 @@ const views = { chain: mountChain(document.getElementById("v-chain")!, getData),
 
 function refresh() {
   const d = active.data;
-  document.getElementById("stale")!.innerHTML = !active.user && d === BUNDLED
-    ? `<div class="box warn">Using bundled data for game <b>${d.meta.gameVersion}</b>. The game has been updated since (2026-09-23), so recipes may be out of date. Import your own export on the <b>Game data</b> tab.</div>` : "";
+  const old = isOlderThanCurrent(d.meta.gameVersion), cur = CURRENT_GAME.join(".");
+  document.getElementById("stale")!.innerHTML = old
+    ? `<div class="box warn">${d === BUNDLED ? "Bundled data is" : "Imported data is"} for game <b>${d.meta.gameVersion}</b>, but the game is at <b>${cur}</b>, so recipes, power and workers may be out of date. ${d === BUNDLED ? "Import your own export on the <b>Game data</b> tab." : "Re-export from the game and import again."}</div>`
+    : old === null ? `<div class="box warn">Could not read the game version (<b>${d.meta.gameVersion}</b>); check it matches ${cur}.</div>` : "";
   (Object.keys(views) as (keyof typeof views)[]).forEach((k) => views[k]());
 }
 function show(t: keyof typeof views) {
