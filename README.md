@@ -18,7 +18,7 @@ npm run wiki:check    # cross-check recipes against wiki.coigame.com (needs netw
 | M0 setup (Vite, TS, Vitest, CI) | done |
 | M1 data: schema + validator | done |
 | M1 data | `data/0.8.1a-b550-Update-4` is an in-game export (see Data). Wiki cross-check script is written but unrun (wiki unreachable from the build sandbox). Own C# exporter not needed unless the upstream one lags a patch |
-| M2 engine | rates, balancer, flex loop (phases + throttled), issues done; all section 5 tests pass. Still to do: LP chain solver, costs |
+| M2 engine | rates, balancer, flex loop, issues, recursive chain solver, cost totals done and tested. Still to do: LP solver for cycles/recycling |
 | M3-M7 | not started (a minimal designer shell is in `src/main.ts`) |
 
 Machine workers, power, maintenance, footprint and ports are optional in the schema and absent from the prototype data until the real export exists.
