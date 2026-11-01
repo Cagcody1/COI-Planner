@@ -79,3 +79,20 @@ describe("version check", () => {
     expect(isOlderThanCurrent("nonsense")).toBeNull();
   });
 });
+
+import { exportBackup, importBackup } from "../src/ui/store";
+describe("backup", () => {
+  it("rejects files that are not backups", () => {
+    expect(() => importBackup('{"a":1}')).toThrow(/not a Factory Planner backup/);
+    expect(() => importBackup("not json")).toThrow();
+  });
+  it("round-trips through localStorage", () => {
+    const store = new Map<string, string>();
+    (globalThis as any).localStorage = { get length() { return store.size; }, key: (i: number) => [...store.keys()][i] ?? null, getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v), removeItem: (k: string) => void store.delete(k) };
+    store.set("coi-rate", "48"); store.set("other", "x");
+    const b = exportBackup();
+    store.clear();
+    expect(importBackup(b)).toBe(1);
+    expect(store.get("coi-rate")).toBe("48"); expect(store.has("other")).toBe(false);
+  });
+});

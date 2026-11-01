@@ -41,3 +41,19 @@ export function isOlderThanCurrent(version: string): boolean | null {
   for (let i = 0; i < 3; i++) if (v[i] !== CURRENT_GAME[i]) return v[i] < CURRENT_GAME[i];
   return false;
 }
+
+/** Everything the planner saves in this browser (keys start with "coi-"): imported game data, designs, choices. */
+export function exportBackup(): string {
+  const items: Record<string, unknown> = {};
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i)!; if (k.startsWith("coi-")) items[k] = JSON.parse(localStorage.getItem(k)!); } } catch { /* storage blocked */ }
+  return JSON.stringify({ coiPlannerBackup: 1, savedAt: new Date().toISOString(), items });
+}
+/** Restores a backup written by exportBackup. Returns the number of entries restored; throws on a file that isn't a backup. */
+export function importBackup(text: string): number {
+  const b = JSON.parse(text);
+  if (!b || b.coiPlannerBackup !== 1 || typeof b.items !== "object") throw new Error("That file is not a Factory Planner backup.");
+  if (b.items["coi-userdata"] && validateGameData(b.items["coi-userdata"]).length) throw new Error("The backup's game data is invalid.");
+  let n = 0;
+  for (const [k, v] of Object.entries(b.items)) if (k.startsWith("coi-") && set(k, v)) n++;
+  return n;
+}

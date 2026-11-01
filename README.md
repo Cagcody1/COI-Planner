@@ -15,6 +15,10 @@ npm run wiki:check    # cross-check recipes against wiki.coigame.com (needs netw
 ## Live site
 Every push to `main` is built and tested by GitHub Actions and published to GitHub Pages: https://cagcody1.github.io/COI-Planner/ . One-time setup: repo Settings → Pages → Source: **GitHub Actions**.
 
+## Portable version (single file)
+`npm run build:single` writes `dist-single/coi-planner.html` (~240 kB): the whole app and the bundled game data in one file you can open by double-click, copy to a USB stick, or email. GitHub builds it on every push to `main`: download it from the site at `/coi-planner.html` or as the `coi-planner-portable` artifact on the workflow run.
+Saved data (imported game data, designs, choices) is stored by the browser for the file's location; use **Download backup** / **Restore backup** on the Game data tab to move it between browsers or after moving the file.
+
 ## Status
 | Milestone | State |
 |---|---|

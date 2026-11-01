@@ -1,7 +1,7 @@
 import { importCod } from "../data/importCod";
 import { diffData } from "../data/diff";
 import { validateGameData, type GameData } from "../data/schema";
-import { BUNDLED, LINES, checkLines, clearUserData, esc, saveUserData } from "./store";
+import { BUNDLED, LINES, checkLines, clearUserData, esc, exportBackup, importBackup, saveUserData } from "./store";
 
 export function mountData(el: HTMLElement, getData: () => GameData, isUser: () => boolean, onChange: () => void) {
   let msg = "";
@@ -47,6 +47,9 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <div class="sect"><label class="lbl" for="dF">Import from the game</label><input id="dF" type="file" accept=".json,application/json" multiple>
       <p class="hint">Select <code>machines_and_buildings.json</code> and <code>products.json</code> (and <code>transports.json</code>) together. Importing after a patch shows what changed.</p></div>
       ${isUser() ? `<div class="sect"><button class="btn" id="dReset">Go back to bundled data</button></div>` : ""}
+      <div class="sect"><label class="lbl">Backup (imported data, designs, choices)</label>
+      <button class="btn" id="dBackup">Download backup</button> <label class="btn" style="display:inline-block;cursor:pointer">Restore backup<input id="dRestore" type="file" accept=".json,application/json" hidden></label>
+      <p class="hint">Saved data lives in this browser for this file's location. If you move or rename the file, or use another browser, restore from a backup.</p></div>
       <div class="sect">${msg}</div></div>
       <div class="panel"><h2>How to get the data from the game</h2>
       <ol style="padding-left:18px;margin:0"><li>Get the exporter mod <b>captain-of-data</b> (github.com/doubleaxe/captain-of-data). Build <code>mod/DataExtractor.csproj</code> with Visual Studio (Windows, .NET 4.8) after setting <code>COI_ROOT</code> to your game folder.</li>
@@ -54,6 +57,17 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <li>The mod writes JSON files to <code>c:\\temp</code>. Pick them in the box on the left.</li></ol>
       <p class="note">Nothing is uploaded: files are read in your browser. After a game update, repeat step 2 and 3; the page lists changed recipes and machines. Footprints and port positions are not in this export yet, so the grid layout is not available.</p></div></div>`;
     el.querySelector<HTMLInputElement>("#dF")!.onchange = (e) => { const f = (e.target as HTMLInputElement).files; if (f?.length) void onFiles(f); };
+    el.querySelector<HTMLButtonElement>("#dBackup")!.onclick = () => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([exportBackup()], { type: "application/json" }));
+      a.download = `coi-planner-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(a.href);
+    };
+    el.querySelector<HTMLInputElement>("#dRestore")!.onchange = async (e) => {
+      const f = (e.target as HTMLInputElement).files?.[0]; if (!f) return;
+      try { const n = importBackup(await f.text()); msg = `<div class="box good">Restored ${n} saved item(s).</div>`; onChange(); }
+      catch (err) { msg = `<div class="box bad">${esc((err as Error).message)}</div>`; }
+      render();
+    };
     el.querySelector<HTMLButtonElement>("#dReset")?.addEventListener("click", () => { clearUserData(); msg = ""; onChange(); render(); });
   }
   return render;
