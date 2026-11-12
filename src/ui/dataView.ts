@@ -1,4 +1,5 @@
 import { importCod } from "../data/importCod";
+import { summarizeExport } from "../data/summarize";
 import { diffData } from "../data/diff";
 import { validateGameData, type GameData } from "../data/schema";
 import { BUNDLED, LINES, checkLines, clearUserData, esc, exportBackup, importBackup, saveUserData } from "./store";
@@ -47,6 +48,8 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <div class="sect"><label class="lbl" for="dF">Import from the game</label><input id="dF" type="file" accept=".json,application/json" multiple>
       <p class="hint">Select <code>machines_and_buildings.json</code> and <code>products.json</code> (and <code>transports.json</code>) together. Importing after a patch shows what changed.</p></div>
       ${isUser() ? `<div class="sect"><button class="btn" id="dReset">Go back to bundled data</button></div>` : ""}
+      <div class="sect"><label class="lbl" for="dSum">Export file too big to send? Make a small summary</label><input id="dSum" type="file" accept=".json,application/json">
+      <p class="hint">Pick the large <code>planner-data-*.json</code> from the exporter mod. This reads it on your PC and saves a small <code>planner-export-summary.json</code> (structure and a few examples, not the whole file) that you can send.</p></div>
       <div class="sect"><label class="lbl">Backup (imported data, designs, choices)</label>
       <button class="btn" id="dBackup">Download backup</button> <label class="btn" style="display:inline-block;cursor:pointer">Restore backup<input id="dRestore" type="file" accept=".json,application/json" hidden></label>
       <p class="hint">Saved data lives in this browser for this file's location. If you move or rename the file, or use another browser, restore from a backup.</p></div>
@@ -57,6 +60,18 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <li>The mod writes JSON files to <code>c:\\temp</code>. Pick them in the box on the left.</li></ol>
       <p class="note">Nothing is uploaded: files are read in your browser. After a game update, repeat step 2 and 3; the page lists changed recipes and machines. Footprints and port positions are not in this export yet, so the grid layout is not available.</p></div></div>`;
     el.querySelector<HTMLInputElement>("#dF")!.onchange = (e) => { const f = (e.target as HTMLInputElement).files; if (f?.length) void onFiles(f); };
+    el.querySelector<HTMLInputElement>("#dSum")!.onchange = async (e) => {
+      const f = (e.target as HTMLInputElement).files?.[0]; if (!f) return;
+      try {
+        const text = await f.text(); const sum = summarizeExport(JSON.parse(text)); const out = JSON.stringify(sum);
+        const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([out], { type: "application/json" }));
+        a.download = "planner-export-summary.json"; a.click(); URL.revokeObjectURL(a.href);
+        msg = `<div class="box good">Summary saved as planner-export-summary.json: ${(out.length / 1024).toFixed(0)} kB from a ${(f.size / 1048576).toFixed(1)} MB file, ${Object.keys(sum.types).length} kinds of prototype.</div>`;
+      } catch (err) {
+        msg = `<div class="box bad">${esc(err instanceof RangeError || /memory|string length/i.test(String(err)) ? "That file is too big for the browser to read. Tell me its size in MB." : (err as Error).message)}</div>`;
+      }
+      render();
+    };
     el.querySelector<HTMLButtonElement>("#dBackup")!.onclick = () => {
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([exportBackup()], { type: "application/json" }));
