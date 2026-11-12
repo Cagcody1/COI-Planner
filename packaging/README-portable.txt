@@ -19,6 +19,7 @@ Game data exporter (to get current recipes, layouts and storages from your game)
                                "Planner Data Exporter", start a NEW map, wait for it to load. The export appears in
                                %APPDATA%\Captain of Industry\Mods\PlannerDataExporter\exports; run Summarize-Export.cmd there
                                if it is huge, then import in the planner (Game data tab).
+  Uninstall-Exporter.cmd       removes the mod (and its exports) from the game's Mods folder when you are done.
 
 Game data
   The planner ships with data for game 0.8.1a, which is older than the current game. It shows a warning until you
