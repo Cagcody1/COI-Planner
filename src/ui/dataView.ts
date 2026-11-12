@@ -55,9 +55,10 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <p class="hint">Saved data lives in this browser for this file's location. If you move or rename the file, or use another browser, restore from a backup.</p></div>
       <div class="sect">${msg}</div></div>
       <div class="panel"><h2>How to get the data from the game</h2>
-      <ol style="padding-left:18px;margin:0"><li>Get the exporter mod <b>captain-of-data</b> (github.com/doubleaxe/captain-of-data). Build <code>mod/DataExtractor.csproj</code> with Visual Studio (Windows, .NET 4.8) after setting <code>COI_ROOT</code> to your game folder.</li>
-      <li>Copy the built <code>DataExtractor.dll</code> to <code>%APPDATA%\\Captain of Industry\\Mods\\DataExtractor</code> and start the game and load a save.</li>
-      <li>The mod writes JSON files to <code>c:\\temp</code>. Pick them in the box on the left.</li></ol>
+      <ol style="padding-left:18px;margin:0"><li>In the portable planner folder, double-click <code>Install-Exporter.cmd</code>. It copies the exporter mod into your game's <code>Mods</code> folder with the right name. (No such file? The mod is only included when the planner was built on a PC with the game installed; otherwise get <code>PlannerDataExporter</code> from the project's GitHub Releases.)</li>
+      <li>Start the game, enable <b>Planner Data Exporter</b> in the mod list and start a <b>new</b> map. Wait for it to load.</li>
+      <li>The export appears in <code>%APPDATA%\\Captain of Industry\\Mods\\PlannerDataExporter\\exports</code>. If it is very large, double-click <code>Summarize-Export.cmd</code> in that mod folder first and send the summary.</li>
+      <li>Import the files here (the importer for the new export format is still being written; the older exporter's <code>machines_and_buildings.json</code> and <code>products.json</code> work today).</li></ol>
       <p class="note">Nothing is uploaded: files are read in your browser. After a game update, repeat step 2 and 3; the page lists changed recipes and machines. Footprints and port positions are not in this export yet, so the grid layout is not available.</p></div></div>`;
     el.querySelector<HTMLInputElement>("#dF")!.onchange = (e) => { const f = (e.target as HTMLInputElement).files; if (f?.length) void onFiles(f); };
     el.querySelector<HTMLInputElement>("#dSum")!.onchange = async (e) => {
