@@ -19,8 +19,22 @@ Every push to `main` is built and tested by GitHub Actions and published to GitH
 `npm run build:single` writes `dist-single/coi-planner.html` (~240 kB): the whole app and the bundled game data in one file you can open by double-click, copy to a USB stick, or email. GitHub builds it on every push to `main`: download it from the site at `/coi-planner.html` or as the `coi-planner-portable` artifact on the workflow run.
 Saved data (imported game data, designs, choices) is stored by the browser; use **Download backup** / **Restore backup** on the Game data tab to move it between browsers or after moving the file.
 
-### Portable app (folder)
-`packaging/` holds a launcher (`COI-Planner.cmd`) and readme for a portable Windows folder: `COI-Planner.cmd`, `app\COI-Planner.html`, `Data\`. The launcher opens the planner in its own Edge/Chrome window with the browser profile kept in `Data\browser`, so saved data moves with the folder (checked in Chromium: data follows the Data folder, not the file path). It is built and zipped by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) (recipe `COI-Planner` in its `projects.json`), which downloads Node itself.
+### Program window (the main way to use it)
+`desktop/` + `packaging/build_embedded.py` build **COI Planner as its own program window**: python.org's embeddable Python
+(like PocketApps / PocketBuilder) with pywebview showing the planner in Edge WebView2. A small Python backend
+(`desktop/planner_api.py`) does what a web page cannot: installs and removes the exporter mod in the game's `Mods` folder,
+lists and summarizes its exports, opens folders, saves files. Everything the program saves is in its `Data` folder, so the
+folder is portable. If the window cannot start it falls back to `COI-Planner-Browser.cmd` (Edge/Chrome app window).
+
+Built by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) from `pocketbuilder.json` in this repo (PocketBuilder
+reads recipes from repos whose name contains "pocket": rename the repo to **Pocket-COIPlanner**). The build compiles the
+exporter mod against the game on the build PC (optional step) and bundles it. PocketApps installs and updates it from the
+GitHub release (`app.json` in the zip).
+
+Checked here: backend logic and packaging layout (`python -m pytest tests_py`), the page's native panel against a fake
+backend in a real browser. **Not checked: the real WebView2 window, pywebview/pythonnet on the embedded Python, and the
+PocketApps hand-over** (needs Windows). The build runs `coi_planner.py --check` on the packaged program, so a packaging
+problem shows up in the build log.
 
 ## Status
 | Milestone | State |

@@ -26,6 +26,7 @@ function show(t: keyof typeof views) {
   document.querySelectorAll<HTMLElement>("[data-t]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.t === t)));
   (Object.keys(views) as string[]).forEach((k) => (document.getElementById("v-" + k)!.hidden = k !== t));
   history.replaceState(null, "", "#" + t);
+  if (t === "data") views.data();
 }
 document.querySelectorAll<HTMLElement>("[data-t]").forEach((b) => (b.onclick = () => show(b.dataset.t as keyof typeof views)));
 refresh();

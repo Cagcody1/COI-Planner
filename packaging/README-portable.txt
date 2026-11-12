@@ -1,29 +1,26 @@
-Captain of Industry Factory Planner (portable)
-==============================================
+COI Planner (portable)
+======================
 
-Start: double-click COI-Planner.cmd. Nothing is installed.
-It opens the planner in its own window using Microsoft Edge or Google Chrome (one of them is on every Windows 10/11 PC).
+Start: double-click COI-Planner.cmd (or start it from PocketApps). It opens a program window. Nothing is installed.
+Needs Windows 10/11 with Microsoft Edge WebView2 (already part of Windows 11 and of Edge).
 
-Folders
-  app\COI-Planner.html   the whole program in one file (no internet needed)
-  Data\browser           everything you save: imported game data, designs, choices (created on first start)
+Everything it saves (imported game data, designs, settings, backups you make) is in the Data folder next to the program.
+Copy the whole folder to another PC or a USB drive and it comes along. Delete Data to start fresh.
 
-Moving it: copy the whole folder to a USB drive or another PC. Your saved data comes along because it is in Data\.
-To start fresh, close the planner and delete the Data folder.
-If Edge/Chrome is not found, the planner opens in your default browser instead and saves there; use
-"Download backup" / "Restore backup" on the Game data tab to carry your data between computers.
+Game data from your own game (current recipes, building sizes and ports, storages)
+  Game data tab -> Game-data exporter:
+    Install exporter      puts the mod into your game's Mods folder
+    (start the game, enable "Planner Data Exporter", start a NEW map, wait for it to load)
+    Make summary          shrinks a very large export to something you can send
+    Remove exporter       removes the mod again when you are done
+  After a game update: update this program, then click "Update exporter" and repeat.
+  The mod is compiled against YOUR game when this program is built on a PC that has the game installed. If the
+  Exporter folder is missing here, it was built somewhere else.
 
-Game data exporter (current recipes, layouts and storages straight from your game)
-  Exporter-Tools.cmd   ONE menu for everything: install the exporter into the game, make a small summary of its export,
-                       open the exports folder, uninstall it when you are done, start the planner.
-  Exporter\PlannerDataExporter   the mod itself (included when this copy was built on a PC that has the game installed;
-                       it is compiled against YOUR game version, so after a game update rebuild and update the planner).
-  Steps: Exporter-Tools -> 1 (install; updating keeps your exports). Start the game, enable "Planner Data Exporter", start a NEW map and wait for it to
-  load. Then Exporter-Tools -> 2 if the export is huge, and import the file in the planner (Game data tab).
+If the window does not open
+  COI-Planner-Browser.cmd opens the same planner in its own Edge/Chrome window (its data is then in Data\browser).
+  Exporter-Tools.cmd is a plain menu for the exporter that works without the window.
+  Data\last-error.txt says why the window could not start.
 
-Game data
-  The planner ships with data for game 0.8.1a, which is older than the current game. It shows a warning until you
-  import your own export: Game data tab -> pick machines_and_buildings.json and products.json (and transports.json)
-  written by the exporter mod. The page then lists every recipe and machine that changed.
-
-Updating: replace the app\ folder with the new one. Keep Data\.
+Folders: app\ (the program), python\ (its runtime), Exporter\ (the mod), Data\ (yours).
+Updating: PocketApps replaces the program files and keeps Data. By hand: unzip over the old folder, keep Data.

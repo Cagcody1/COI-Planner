@@ -1,0 +1,38 @@
+{
+  "_comment": "Build recipe read by PocketBuilder from this repo (it reads repos whose name contains 'pocket': rename the repo to Pocket-COIPlanner). Keep it in sync with packaging/build_embedded.py and the README: if you change a build step, the version file, an artifact or the zip name, update this file in the same commit.",
+  "name": "COI-Planner",
+  "python": "3.12",
+  "version": {
+    "file": "package.json",
+    "regex": "(?m)^\\s*\"version\"\\s*:\\s*\"([^\"]+)\"",
+    "pattern": "^\\d+\\.\\d+\\.\\d+$"
+  },
+  "setup": [
+    "npm ci",
+    "python -m pip install pytest"
+  ],
+  "test": [
+    "npm run data:validate",
+    "npm test",
+    "python -m pytest tests_py -q"
+  ],
+  "build": [
+    "npm run build:single",
+    "powershell -NoProfile -ExecutionPolicy Bypass -File tools\\exporter\\build.ps1 -Optional",
+    "python packaging/build_embedded.py --version {version}",
+    { "require": ["dist/COI-Planner/app/COI-Planner.html", "dist/COI-Planner/python/pythonw.exe"] }
+  ],
+  "package": [
+    { "zip": { "src": "dist/COI-Planner", "dest": "dist/COI-Planner-Portable-v{version}.zip" } }
+  ],
+  "artifacts": [
+    "dist/COI-Planner-Portable-v{version}.zip"
+  ],
+  "release": {
+    "mode": "tag",
+    "tag": "v{version}",
+    "title": "COI Planner v{version}",
+    "notes": "COI Planner as a program window (Edge WebView2; Windows 10/11). Install it from PocketApps, or unzip anywhere and double-click COI-Planner.cmd. Nothing is installed; everything it saves stays in the Data folder. It can install the game-data exporter mod for you and read its export (the mod is included when this was built on a PC that has the game). If the window will not open, COI-Planner-Browser.cmd opens it in Edge/Chrome. The bundled game data is older than the current game: use the Game data tab to bring in your own export."
+  },
+  "requires": ["git", "gh", "python", "node", "dotnet"]
+}

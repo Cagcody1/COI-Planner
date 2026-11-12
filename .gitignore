@@ -4,3 +4,6 @@ dist
 tools/exporter/bin
 tools/exporter/obj
 dist-single
+__pycache__/
+.pytest_cache/
+*.pyc
