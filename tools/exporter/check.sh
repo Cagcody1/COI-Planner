@@ -18,6 +18,10 @@ m = d["protos"]["FakeMachine"][0]["data"]
 assert m["Layout"]["Size"] == [5, 3] and m["Layout"]["Ports"][0]["Direction"] == "North"      # layout + ports + enums
 assert m["Workers"]["Value"] == 8 and m["Product"] == {"protoId": "id"}                       # structs; proto refs stay ids
 assert m["Layout"]["Self"] == {"cycle": "Layout"} and "error" in m["Layout"]["Boom"]          # cycles and throwing getters survive
+assert m["Cost"] == {"type": "Qty", "Value": 3}                                               # value types: stored fields only, no Abs.Abs.Abs...
+assert m["Maybe"] == {"some": "x"} and m["Nothing"] == {"none": True}                          # Option is unwrapped
+assert m["Tile"] == {"type": "RelTile", "X": 1, "Y": 2}                                        # struct with only private storage: simple properties
+assert list(d["protos"])[0] == "FakeMachine"                                                   # buildings are exported before the rest
 assert "Graphics" not in m and "Callback" not in m["Layout"]                                  # graphics / delegates skipped
 assert m["Mesh"] == {"skipped": "UnityEngine.Mesh"}                                              # engine objects are not walked
 assert "truncated" in json.dumps(m["Graph"]) and len(json.dumps(d)) < 100000                   # endless graphs are cut off, output stays small

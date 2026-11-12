@@ -21,9 +21,9 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.1.2";
+    const string Version = "0.1.3";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
-    const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 20000;
+    const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 12000;
     const int MaxSeconds = 45;
     static int nodes;
     ProtosDb database;
@@ -91,6 +91,11 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         if (!t.IsValueType && path.Any(x => ReferenceEquals(x, v))) return Obj("cycle", t.FullName);
         path.Add(v);
         try {
+            // Game value types (Quantity, PartialQuantity, Fix32, Option ...) have computed properties that return more of the
+            // same struct (Abs.Abs.Abs..., AsLarge, Times2Fast). Walking those never ends and fills the file with noise, so
+            // structs are dumped by their stored fields only; Option is unwrapped; a struct without public fields gets only its
+            // simple-typed properties.
+            if (t.IsValueType && !IsSequence(v)) return DumpStruct(v, t, depth, path);
             if (IsSequence(v)) {
                 var list = new List<object>(); int n = 0;
                 foreach (var x in Items(v)) { if (++n > MaxItems) { list.Add(Obj("truncatedAfter", MaxItems)); break; } list.Add(Dump(x, depth + 1, path)); }
@@ -108,12 +113,42 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
             return o;
         } finally { path.RemoveAt(path.Count - 1); }
     }
+    static object DumpStruct(object v, Type t, int depth, List<object> path) {
+        if (t.Name.StartsWith("Option`")) {
+            var has = Member(v, "HasValue");
+            if (!(has is bool) || !(bool)has) return Obj("none", true);
+            return Obj("some", Dump(Member(v, "ValueOrNull"), depth + 1, path));
+        }
+        var o = Obj("type", t.FullName);
+        bool any = false;
+        foreach (var f in t.GetFields(BindingFlags.Public | BindingFlags.Instance)) {
+            if (Skip(f.Name, f.FieldType)) continue;
+            any = true;
+            try { o[f.Name] = Dump(f.GetValue(v), depth + 1, path); } catch (Exception e) { o[f.Name] = Obj("error", e.Message); }
+        }
+        if (!any) {
+            foreach (var p in t.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
+                if (!p.CanRead || p.GetIndexParameters().Length != 0) continue;
+                var pt = p.PropertyType;
+                if (!(pt.IsPrimitive || pt.IsEnum || pt == typeof(string)) || Skip(p.Name, pt)) continue;
+                try { o[p.Name] = Dump(p.GetValue(v, null), depth + 1, path); } catch (Exception e) { o[p.Name] = Obj("error", e.Message); }
+            }
+        }
+        return o;
+    }
     static bool Skip(string name, Type type) {
         return name == "Graphics" || name == "Strings" || name == "Mod" || name == "Gfx" || type.Name == "Gfx" || name.EndsWith("Graphics")
             || typeof(Delegate).IsAssignableFrom(type) || type == typeof(IntPtr);
     }
 
     // ---- export ---------------------------------------------------------------------------------
+    static int Priority(Proto p) {
+        if (p is EntityProto) return 0;
+        var n = p.GetType().Name;
+        if (n.Contains("Recipe")) return 1;
+        if (n.Contains("Transport") || n.Contains("Storage")) return 2;
+        return 3;
+    }
     static bool Wanted(Proto p) {
         if (p is EntityProto) return true;                                  // buildings, machines, storages: includes layouts
         var n = p.GetType().Name;
@@ -123,9 +158,13 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         var groups = new Dictionary<string, List<object>>();
         var errors = new List<object>(); int count = 0;
         var clock = System.Diagnostics.Stopwatch.StartNew();
-        foreach (var proto in database.All<Proto>()) {
-            if (!Wanted(proto)) continue;
-            if (clock.Elapsed.TotalSeconds > MaxSeconds) { errors.Add(Obj("error", "time limit reached; remaining prototypes skipped", "seconds", MaxSeconds)); break; }
+        // Most important first, so a time limit can only cut the least useful: buildings (layouts), recipes, transports/storages, then the rest.
+        var ordered = new List<Proto>();
+        foreach (var p in database.All<Proto>()) if (Wanted(p)) ordered.Add(p);
+        ordered = ordered.OrderBy(p => Priority(p)).ToList();
+        int skipped = 0;
+        foreach (var proto in ordered) {
+            if (clock.Elapsed.TotalSeconds > MaxSeconds) { skipped++; continue; }
             nodes = 0;
             var type = proto.GetType().FullName;
             try {
@@ -134,6 +173,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
                 count++;
             } catch (Exception e) { errors.Add(Obj("id", proto.Id.ToString(), "type", type, "error", e.Message)); }
         }
+        if (skipped > 0) errors.Add(Obj("error", "time limit reached; prototypes skipped", "seconds", MaxSeconds, "skipped", skipped));
         string version = null;
         foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
             Type[] types; try { types = asm.GetTypes(); } catch { continue; }

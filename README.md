@@ -53,7 +53,7 @@ problem shows up in the build log.
 Machine workers, power, maintenance, footprint and ports are optional in the schema and absent from the prototype data until the real export exists.
 
 ## Data
-**The bundled data is out of date.** It is game 0.8.1a (b550) Update 4, converted from [doubleaxe/daxfb-calculator](https://github.com/doubleaxe/daxfb-calculator) (MIT), which was generated in March 2026. The game is now at **0.8.7** (confirmed by the project owner). Another project ([shuntianyifang/coi-balancer](https://github.com/shuntianyifang/coi-balancer), MIT, Oct 2026) targets 0.8.7d (build 619), and the game last updated on 2026-09-23. The app warns whenever the loaded data is older than 0.8.7 (`CURRENT_GAME` in `src/ui/store.ts`).
+**The bundled data is out of date.** It is game 0.8.1a (b550) Update 4, converted from [doubleaxe/daxfb-calculator](https://github.com/doubleaxe/daxfb-calculator) (MIT), which was generated in March 2026. The game is now at **0.8.8d** (seen in the first export from the owner's game). Another project ([shuntianyifang/coi-balancer](https://github.com/shuntianyifang/coi-balancer), MIT, Oct 2026) and the game last updated on 2026-09-23. The app warns whenever the loaded data is older than 0.8.8 (`CURRENT_GAME` in `src/ui/store.ts`).
 
 **Get current data from your own game** (Game data tab in the app, or `npx tsx scripts/import-cod.ts <dir>`):
 1. Build the exporter mod [doubleaxe/captain-of-data](https://github.com/doubleaxe/captain-of-data) (`mod/DataExtractor.csproj`, Visual Studio, set `COI_ROOT` to your game folder). It has no license file, so it is not copied into this repo. It was last updated for 0.8.1a, so it may need small fixes for newer versions; check that it still compiles.

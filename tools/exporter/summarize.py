@@ -111,9 +111,12 @@ def shrink(v, arr, max_depth, depth=0, key=""):
 
 
 def collect_paths(v, prefix, out, depth=0):
+    seg = prefix.split(".")
+    if len(seg) >= 2 and seg[-1] == seg[-2]:       # Abs.Abs.Abs... : a value that returns itself; noise, not structure
+        return
     t = "null" if v is None else "array" if isinstance(v, list) else "object" if isinstance(v, dict) else type(v).__name__
     out.setdefault(prefix or "$", set()).add(t)
-    if depth > 8 or len(out) > 600:
+    if depth > 7 or len(out) > 200:
         return
     if isinstance(v, list):
         for x in v[:3]:
@@ -157,7 +160,7 @@ def summarize(path, chunk=CHUNK, budget=9000):
     for name, t in types.items():
         out_types[name] = {
             "count": t["count"], "totalBytes": t["bytes"], "ids": t["ids"],
-            "fieldPaths": {p: "|".join(sorted(v)) for p, v in list(t["paths"].items())[:400]},
+            "fieldPaths": {p: "|".join(sorted(v)) for p, v in list(t["paths"].items())[:150]},
             "example": t["example"], **({"extraExample": t["extra"]} if t["extra"] else {}),
             "largestEntries": [{"id": i, "bytes": s, "bytesByField": dict(sorted(f.items(), key=lambda kv: -kv[1])[:8])} for s, i, f in t["biggest"]],
         }

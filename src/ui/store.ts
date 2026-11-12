@@ -31,8 +31,8 @@ export function checkLines(data: GameData, lines: Line[]): string[] {
 }
 export const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
-/** Newest game version the planner is meant for (confirmed by the project owner). Update when the game updates. */
-export const CURRENT_GAME = [0, 8, 7] as const;
+/** Newest game version the planner is meant for (0.8.8d seen in the first export from the owner's game). Update when the game updates. */
+export const CURRENT_GAME = [0, 8, 8] as const;
 const parse = (v: string) => (v.match(/(\d+)\.(\d+)\.(\d+)/)?.slice(1, 4).map(Number) ?? null);
 /** true if `version` is known to be older than CURRENT_GAME; null if it can't be read. */
 export function isOlderThanCurrent(version: string): boolean | null {

@@ -261,3 +261,17 @@ def test_pinned_proxy_tools_download_is_the_real_file():
     import hashlib, io, tarfile
     assert hashlib.sha256(data).hexdigest() == build_embedded.PROXY_TOOLS_SHA256
     assert b"proxy_tools-0.1.0/proxy_tools/__init__.py" in [m.name.encode() for m in tarfile.open(fileobj=io.BytesIO(data)).getmembers()]
+
+
+def test_summary_ignores_self_returning_value_noise(tmp_path):
+    """Abs.Abs.Abs... (a number type whose property returns itself) must not flood the field list."""
+    import summarize
+    deep = cur = {"Value": 3}
+    for _ in range(12):
+        cur["Abs"] = {"Value": 3}
+        cur = cur["Abs"]
+    pkg = {"gameVersion": "0.8.8d", "protoCount": 1, "protos": {"T": [{"id": "P", "name": "P", "data": {"Cost": deep, "Layout": {"Size": [1, 2]}}}]}}
+    f = tmp_path / "planner-data-1.json"
+    f.write_text(json.dumps(pkg))
+    paths = summarize.summarize(str(f))["types"]["T"]["fieldPaths"]
+    assert "Cost.Abs" in paths and "Cost.Abs.Abs" not in paths and "Layout.Size" in paths and len(paths) < 12

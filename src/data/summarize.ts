@@ -30,9 +30,11 @@ export function shrink(v: unknown, arr: number, maxDepth: number, depth = 0, key
 }
 
 function collectPaths(v: unknown, prefix: string, out: Record<string, Set<string>>, depth: number) {
+  const seg = prefix.split(".");
+  if (seg.length >= 2 && seg[seg.length - 1] === seg[seg.length - 2]) return;      // Abs.Abs.Abs...: a value returning itself
   const type = v === null ? "null" : Array.isArray(v) ? "array" : typeof v;
   (out[prefix || "$"] ??= new Set()).add(type);
-  if (depth > 8 || Object.keys(out).length > 600) return;
+  if (depth > 7 || Object.keys(out).length > 200) return;
   if (Array.isArray(v)) { for (const x of v.slice(0, 3)) collectPaths(x, prefix + "[]", out, depth + 1); }
   else if (v && typeof v === "object") for (const [k, x] of Object.entries(v as object)) collectPaths(x, prefix ? prefix + "." + k : k, out, depth + 1);
 }
@@ -58,7 +60,7 @@ export function summarizeExport(pkg: any, budgetPerType = 9000): ExportSummary {
     }
     types[type] = {
       count: list.length, ids: list.slice(0, 6).map((e) => e.id),
-      fieldPaths: Object.fromEntries(Object.entries(paths).slice(0, 400).map(([p, t]) => [p, [...t].join("|")])),
+      fieldPaths: Object.fromEntries(Object.entries(paths).slice(0, 150).map(([p, t]) => [p, [...t].join("|")])),
       example, ...(extras.length ? { extraExamples: extras } : {}),
     };
   }
