@@ -1,0 +1,11 @@
+{
+  "id": "PlannerDataExporter",
+  "version": "0.1.0",
+  "display_name": "Planner Data Exporter",
+  "description_short": "Read-only export of recipes, machines, layouts and storages for the COI Planner.",
+  "authors": ["COI Planner"],
+  "min_game_version": "0.8.7",
+  "primary_dlls": ["PlannerDataExporter.dll"],
+  "can_add_to_saved_game": true,
+  "can_remove_from_saved_game": true
+}
