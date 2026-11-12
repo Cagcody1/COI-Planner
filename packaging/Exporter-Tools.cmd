@@ -2,7 +2,8 @@
 rem COI Planner - game data exporter tools, all in one place. Works from the planner's own folder.
 setlocal
 cd /d "%~dp0"
-set "MOD=%APPDATA%\Captain of Industry\Mods\PlannerDataExporter"
+set "MODS=%APPDATA%\Captain of Industry\Mods"
+set "MOD=%MODS%\PlannerDataExporter"
 
 :menu
 cls
@@ -33,11 +34,31 @@ if errorlevel 2 goto summary
 goto install
 
 :install
-call "%~dp0Install-Exporter.cmd"
+set "SRC=%~dp0Exporter\PlannerDataExporter"
+if not exist "%SRC%\manifest.json" goto noexporter
+if not exist "%MODS%" mkdir "%MODS%"
+rem Copies over an existing install (an update) without touching its exports folder.
+xcopy "%SRC%" "%MOD%\" /e /i /q /y >nul
+if errorlevel 1 goto copyfailed
+echo.
+echo Installed to "%MOD%".
+echo Next: start the game, enable "Planner Data Exporter" in the mod list, start a NEW map and wait for it to load.
+echo Then come back here: option 2 makes a small summary of the export, option 3 opens the exports folder.
+pause
 goto menu
 
 :uninstall
-call "%~dp0Uninstall-Exporter.cmd"
+if not exist "%MOD%" goto notinstalled
+echo.
+echo This deletes "%MOD%"
+echo including its exports folder (the planner-data-*.json files and any summary). Copy what you still need first.
+echo Close the game before continuing.
+choice /c YN /n /m "Delete it? [Y/N] "
+if errorlevel 2 goto menu
+rmdir /s /q "%MOD%"
+if exist "%MOD%" goto delfailed
+echo Removed. Choose 1 to install it again later.
+pause
 goto menu
 
 :planner
@@ -73,6 +94,26 @@ if not defined PY if exist "%~dp0..\PocketBuilder\python\python.exe" set "PY=%~d
 if not defined PY (py -3 --version >nul 2>nul && for /f "delims=" %%P in ('py -3 -c "import sys;print(sys.executable)"') do set "PY=%%P")
 if not defined PY (python --version >nul 2>nul && for /f "delims=" %%P in ('python -c "import sys;print(sys.executable)"') do set "PY=%%P")
 exit /b 0
+
+:noexporter
+echo The exporter is not part of this copy of the planner. It is only included when the planner is built on a PC that has the game installed.
+pause
+goto menu
+
+:copyfailed
+echo Copying failed. Close the game and try again. The folder must end up named PlannerDataExporter inside "%MODS%".
+pause
+goto menu
+
+:notinstalled
+echo The exporter is not installed.
+pause
+goto menu
+
+:delfailed
+echo Could not delete everything. Close the game and try again.
+pause
+goto menu
 
 :noexports
 echo No export found yet. Install the exporter (option 1), start the game with it enabled, and start a NEW map.

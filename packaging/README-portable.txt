@@ -18,7 +18,7 @@ Game data exporter (current recipes, layouts and storages straight from your gam
                        open the exports folder, uninstall it when you are done, start the planner.
   Exporter\PlannerDataExporter   the mod itself (included when this copy was built on a PC that has the game installed;
                        it is compiled against YOUR game version, so after a game update rebuild and update the planner).
-  Steps: Exporter-Tools -> 1 (install). Start the game, enable "Planner Data Exporter", start a NEW map and wait for it to
+  Steps: Exporter-Tools -> 1 (install; updating keeps your exports). Start the game, enable "Planner Data Exporter", start a NEW map and wait for it to
   load. Then Exporter-Tools -> 2 if the export is huge, and import the file in the planner (Game data tab).
 
 Game data
