@@ -55,10 +55,11 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <p class="hint">Saved data lives in this browser for this file's location. If you move or rename the file, or use another browser, restore from a backup.</p></div>
       <div class="sect">${msg}</div></div>
       <div class="panel"><h2>How to get the data from the game</h2>
-      <ol style="padding-left:18px;margin:0"><li>In the portable planner folder, double-click <code>Install-Exporter.cmd</code>. It copies the exporter mod into your game's <code>Mods</code> folder with the right name. (No such file? The mod is only included when the planner was built on a PC with the game installed; otherwise get <code>PlannerDataExporter</code> from the project's GitHub Releases.)</li>
+      <ol style="padding-left:18px;margin:0"><li>Open <code>Exporter-Tools.cmd</code> in the planner's folder (in PocketApps: <code>Apps\\COI Planner</code>) and choose <b>1</b>. It copies the exporter mod into your game's <code>Mods</code> folder with the right name. (No such file or no exporter? The mod is only included when the planner was built on a PC with the game installed.)</li>
       <li>Start the game, enable <b>Planner Data Exporter</b> in the mod list and start a <b>new</b> map. Wait for it to load.</li>
-      <li>The export appears in <code>%APPDATA%\\Captain of Industry\\Mods\\PlannerDataExporter\\exports</code>. If it is very large, double-click <code>Summarize-Export.cmd</code> in that mod folder first and send the summary. When you are done, <code>Uninstall-Exporter.cmd</code> removes the mod again.</li>
-      <li>Import the files here (the importer for the new export format is still being written; the older exporter's <code>machines_and_buildings.json</code> and <code>products.json</code> work today).</li></ol>
+      <li>Back in <code>Exporter-Tools.cmd</code>: choose <b>2</b> if the export is very large (it makes a small summary), or <b>3</b> to open the exports folder.</li>
+      <li>Import here (the importer for the new export format is still being written; the older exporter's <code>machines_and_buildings.json</code> and <code>products.json</code> work today).</li>
+      <li>When you are done, choose <b>4</b> to remove the mod again. After a game update, update the planner (PocketApps) and repeat.</li></ol>
       <p class="note">Nothing is uploaded: files are read in your browser. After a game update, repeat step 2 and 3; the page lists changed recipes and machines. Footprints and port positions are not in this export yet, so the grid layout is not available.</p></div></div>`;
     el.querySelector<HTMLInputElement>("#dF")!.onchange = (e) => { const f = (e.target as HTMLInputElement).files; if (f?.length) void onFiles(f); };
     el.querySelector<HTMLInputElement>("#dSum")!.onchange = async (e) => {

@@ -13,13 +13,13 @@ To start fresh, close the planner and delete the Data folder.
 If Edge/Chrome is not found, the planner opens in your default browser instead and saves there; use
 "Download backup" / "Restore backup" on the Game data tab to carry your data between computers.
 
-Game data exporter (to get current recipes, layouts and storages from your game)
-  Exporter\PlannerDataExporter  the mod (only present if the game was installed on the PC that built this copy)
-  Install-Exporter.cmd         copies it into your game's Mods folder with the right name. Then: start the game, enable
-                               "Planner Data Exporter", start a NEW map, wait for it to load. The export appears in
-                               %APPDATA%\Captain of Industry\Mods\PlannerDataExporter\exports; run Summarize-Export.cmd there
-                               if it is huge, then import in the planner (Game data tab).
-  Uninstall-Exporter.cmd       removes the mod (and its exports) from the game's Mods folder when you are done.
+Game data exporter (current recipes, layouts and storages straight from your game)
+  Exporter-Tools.cmd   ONE menu for everything: install the exporter into the game, make a small summary of its export,
+                       open the exports folder, uninstall it when you are done, start the planner.
+  Exporter\PlannerDataExporter   the mod itself (included when this copy was built on a PC that has the game installed;
+                       it is compiled against YOUR game version, so after a game update rebuild and update the planner).
+  Steps: Exporter-Tools -> 1 (install). Start the game, enable "Planner Data Exporter", start a NEW map and wait for it to
+  load. Then Exporter-Tools -> 2 if the export is huge, and import the file in the planner (Game data tab).
 
 Game data
   The planner ships with data for game 0.8.1a, which is older than the current game. It shows a warning until you
