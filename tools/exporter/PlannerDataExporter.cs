@@ -21,8 +21,11 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.1.0";
-    const int MaxDepth = 7, MaxItems = 6000;
+    const string Version = "0.1.1";
+    // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
+    const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 20000;
+    const int MaxSeconds = 45;
+    static int nodes;
     ProtosDb database;
 
     public PlannerDataExporter(ModManifest manifest) : base(manifest) {}
@@ -81,6 +84,10 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         if (proto != null && !expandProto) return Obj("protoId", proto.Id.ToString());     // references to other prototypes stay ids
         if (typeof(Delegate).IsAssignableFrom(t)) return null;
         if (depth > MaxDepth) return Obj("truncated", t.FullName);
+        if (++nodes > MaxNodesPerProto) return Obj("truncated", "node limit");
+        var ns = t.Namespace ?? "";
+        if (ns.StartsWith("UnityEngine") || ns.StartsWith("System.Reflection") || ns.StartsWith("System.Threading") || ns.StartsWith("System.IO"))
+            return Obj("skipped", t.FullName);                                  // engine objects are slow/unsafe to walk
         if (!t.IsValueType && path.Any(x => ReferenceEquals(x, v))) return Obj("cycle", t.FullName);
         path.Add(v);
         try {
@@ -115,8 +122,11 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
     void Export() {
         var groups = new Dictionary<string, List<object>>();
         var errors = new List<object>(); int count = 0;
+        var clock = System.Diagnostics.Stopwatch.StartNew();
         foreach (var proto in database.All<Proto>()) {
             if (!Wanted(proto)) continue;
+            if (clock.Elapsed.TotalSeconds > MaxSeconds) { errors.Add(Obj("error", "time limit reached; remaining prototypes skipped", "seconds", MaxSeconds)); break; }
+            nodes = 0;
             var type = proto.GetType().FullName;
             try {
                 if (!groups.ContainsKey(type)) groups[type] = new List<object>();
@@ -138,7 +148,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         Directory.CreateDirectory(folder);
         var path = Path.Combine(folder, "planner-data-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ".json");
         File.WriteAllText(path, Json(package), new UTF8Encoding(false));
-        Log.Info("PlannerDataExporter: wrote " + count + " prototypes to " + path);
+        Log.Info("PlannerDataExporter: wrote " + count + " prototypes to " + path + " in " + clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture) + " s");
     }
 
     // ---- minimal JSON writer ----------------------------------------------------------------------

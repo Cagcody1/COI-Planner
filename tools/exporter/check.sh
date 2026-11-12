@@ -8,7 +8,7 @@ OUT="${TMPDIR:-/tmp}/planner-exporter-check"; rm -rf "$OUT"; mkdir -p "$OUT/run"
 mcs -target:library -out:"$OUT/PlannerDataExporter.dll" PlannerDataExporter.cs stubs/GameStubs.cs
 echo "type-check OK"
 mcs -out:"$OUT/harness.exe" test/Harness.cs stubs/GameStubs.cs PlannerDataExporter.cs
-mono "$OUT/harness.exe" "$OUT/run"
+T0=$(date +%s); timeout 20 mono "$OUT/harness.exe" "$OUT/run"; echo "export took $(( $(date +%s) - T0 )) s"
 python3 -I - "$OUT/run/exports" <<'PY'
 import glob, json, sys
 d = json.load(open(glob.glob(sys.argv[1] + "/*.json")[0]))
@@ -19,5 +19,7 @@ assert m["Layout"]["Size"] == [5, 3] and m["Layout"]["Ports"][0]["Direction"] ==
 assert m["Workers"]["Value"] == 8 and m["Product"] == {"protoId": "id"}                       # structs; proto refs stay ids
 assert m["Layout"]["Self"] == {"cycle": "Layout"} and "error" in m["Layout"]["Boom"]          # cycles and throwing getters survive
 assert "Graphics" not in m and "Callback" not in m["Layout"]                                  # graphics / delegates skipped
+assert m["Mesh"] == {"skipped": "UnityEngine.Mesh"}                                              # engine objects are not walked
+assert "truncated" in json.dumps(m["Graph"]) and len(json.dumps(d)) < 100000                   # endless graphs are cut off, output stays small
 print("fake-database run OK:", d["protoCount"], "prototypes")
 PY

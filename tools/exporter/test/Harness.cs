@@ -4,7 +4,9 @@ public enum Dir { East, North }
 public struct Quantity { public int Value; public Quantity(int v) { Value = v; } }
 public class Port { public int X, Y; public Dir Direction; public string Name; public Quantity Rate; }
 public class Layout { public int[] Size = new[] { 5, 3 }; public List<Port> Ports = new List<Port>(); public Layout Self; public Func<int> Callback = () => 1; public string Boom { get { throw new Exception("getter exploded"); } } }
-public class FakeMachine : EntityProto { public Layout Layout = new Layout(); public Quantity Workers = new Quantity(8); public Proto Product; public string Graphics = "skip-me"; }
+public class FakeMachine : EntityProto { public Layout Layout = new Layout(); public Quantity Workers = new Quantity(8); public UnityEngine.Mesh Mesh = new UnityEngine.Mesh(); public Endless Graph = new Endless(); public Proto Product; public string Graphics = "skip-me"; }
+namespace UnityEngine { public class Mesh { public int[] vertices { get { throw new Exception("expensive"); } } } }
+public class Endless { public Endless Next { get { return new Endless(); } } public Endless Other { get { return new Endless(); } } public int N = 1; }
 public class FakeRecipeProto : Proto { public int Seconds = 20; }
 public class Unwanted : Proto { public int X = 1; }
 class P {
