@@ -13,7 +13,12 @@ The mod skeleton and the reflection approach follow BalancerDataExporter (MIT, s
   then Steam; only the game's `Managed\*.dll` files are read. Output: `build\PlannerDataExporter`.
 
 ## Use
-1. Copy the `PlannerDataExporter` folder to `%APPDATA%\Captain of Industry\Mods` (`-Install` does this).
+1. Put the mod in `%APPDATA%\Captain of Industry\Mods` so that this file exists exactly:
+   `%APPDATA%\Captain of Industry\Mods\PlannerDataExporter\manifest.json`
+   The folder name must be exactly `PlannerDataExporter` (the game requires the folder name to match the mod id in
+   `manifest.json`). Unzipping "to a folder named after the zip" makes an extra outer folder such as
+   `PlannerDataExporter-v0.1.0`: copy the **inner** `PlannerDataExporter` folder (the one containing `manifest.json`),
+   not the outer one, and do not nest it twice. `build.ps1 -Install` does it correctly.
 2. Start the game, enable the mod in the mod list, load a **new vanilla test map** (not an important save, no other mods).
 3. The file appears in `...\Mods\PlannerDataExporter\exports\planner-data-<time>.json`; errors go to the game log
    (`PlannerDataExporter`). Send me that file: the first real run shows the exact structure of layouts and storages,
