@@ -18,12 +18,21 @@
   ],
   "build": [
     "npm run build:single",
-    "powershell -NoProfile -ExecutionPolicy Bypass -File tools\\exporter\\build.ps1 -Optional",
     "python packaging/build_embedded.py --version {version}",
-    { "require": ["dist/COI-Planner/app/COI-Planner.html", "dist/COI-Planner/python/pythonw.exe"] }
+    {
+      "require": [
+        "dist/COI-Planner/app/COI-Planner.html",
+        "dist/COI-Planner/python/pythonw.exe"
+      ]
+    }
   ],
   "package": [
-    { "zip": { "src": "dist/COI-Planner", "dest": "dist/COI-Planner-Portable-v{version}.zip" } }
+    {
+      "zip": {
+        "src": "dist/COI-Planner",
+        "dest": "dist/COI-Planner-Portable-v{version}.zip"
+      }
+    }
   ],
   "artifacts": [
     "dist/COI-Planner-Portable-v{version}.zip"
@@ -32,7 +41,12 @@
     "mode": "tag",
     "tag": "v{version}",
     "title": "COI Planner v{version}",
-    "notes": "COI Planner as a program window (Edge WebView2; Windows 10/11). Install it from PocketApps, or unzip anywhere and double-click COI-Planner.cmd. Nothing is installed; everything it saves stays in the Data folder. It can install the game-data exporter mod for you and read its export (the mod is included when this was built on a PC that has the game). If the window will not open, COI-Planner-Browser.cmd opens it in Edge/Chrome. The bundled game data is older than the current game: use the Game data tab to bring in your own export."
+    "notes": "COI Planner as a program window (Edge WebView2; Windows 10/11). Install it from PocketApps, or unzip anywhere and double-click COI-Planner.cmd. Nothing is installed; everything it saves stays in the Data folder. The Game data tab builds the game-data exporter mod on your PC against your game and installs it for you, then reads its export; after a game update just click Rebuild. If the window will not open, COI-Planner-Browser.cmd opens it in Edge/Chrome. The bundled game data is older than the current game: use the Game data tab to bring in your own export."
   },
-  "requires": ["git", "gh", "python", "node", "dotnet"]
+  "requires": [
+    "git",
+    "gh",
+    "python",
+    "node"
+  ]
 }

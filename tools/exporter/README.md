@@ -8,6 +8,9 @@ files; it is built against the game's own DLLs on your PC.
 The mod skeleton and the reflection approach follow BalancerDataExporter (MIT, shuntianyifang); see `LICENSE-THIRD-PARTY`.
 
 ## Build (Windows, game installed)
+Normally you do not build it by hand: the planner's **Game data** tab has a *Build and install exporter* button that compiles
+this source on your PC against your game (and *Rebuild* after a game update). The script below is the manual route.
+
 - With PocketBuilder: recipe **COI-Exporter** (downloads the .NET SDK itself).
 - Or by hand: `powershell -ExecutionPolicy Bypass -File build.ps1 -Install`. It finds the game through `COI_ROOT`,
   then Steam; only the game's `Managed\*.dll` files are read. Output: `build\PlannerDataExporter`.

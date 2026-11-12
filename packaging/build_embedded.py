@@ -3,11 +3,10 @@
     dist/COI-Planner/
         COI-Planner.cmd           starts python\\pythonw.exe app\\coi_planner.py (a program window, Edge WebView2)
         COI-Planner-Browser.cmd   fallback: the planner in its own Edge/Chrome window
-        Exporter-Tools.cmd        fallback tools menu for the exporter, if the window cannot start
         app.json                  how PocketApps lists, starts and updates it
         python/                   the embeddable Python + pywebview + pythonnet (no Tk needed)
         app/                      coi_planner.py, planner_api.py, summarize.py, COI-Planner.html
-        Exporter/PlannerDataExporter/   the game mod, when it was built on this PC (optional)
+        Exporter/source/          the game mod's C# source; the program compiles it on the user's PC, against their game
         Data/                     everything the program saves (created on first start)
     python packaging/build_embedded.py [--version 1.2.3] [--out dist/COI-Planner] [--no-pip] [--layout-only]
 
@@ -105,9 +104,11 @@ LAUNCHER = ('@echo off\r\n'
             'start "" "%~dp0python\\pythonw.exe" "%~dp0app\\coi_planner.py" %*\r\n')
 
 
-def assemble(out: Path, ui: Path, exporter: Path | None, version: str | None) -> list[str]:
-    """Everything except the Python runtime: app files, launchers, readme, app.json, bundled mod. Returns notes."""
-    notes = []
+EXPORTER_SOURCE = ("PlannerDataExporter.cs", "manifest.json", "LICENSE-THIRD-PARTY", "summarize.py")
+
+
+def assemble(out: Path, ui: Path, version: str | None) -> None:
+    """Everything except the Python runtime: app files, launchers, readme, app.json, the mod's source."""
     app = out / "app"
     app.mkdir(parents=True, exist_ok=True)
     if not ui.exists():
@@ -116,25 +117,21 @@ def assemble(out: Path, ui: Path, exporter: Path | None, version: str | None) ->
     for src in (ROOT / "desktop" / "coi_planner.py", ROOT / "desktop" / "planner_api.py", ROOT / "tools" / "exporter" / "summarize.py"):
         shutil.copy2(src, app / src.name)
     (out / "COI-Planner.cmd").write_bytes(LAUNCHER.encode("ascii"))
-    for name in ("COI-Planner-Browser.cmd", "Exporter-Tools.cmd", "README.txt"):
+    for name in ("COI-Planner-Browser.cmd", "README.txt"):
         src = ROOT / "packaging" / ("README-portable.txt" if name == "README.txt" else name)
         shutil.copy2(src, out / name)
     (out / "Data").mkdir(exist_ok=True)
     (out / "Data" / "README.txt").write_text("Everything the program saves lives in this folder. Keep it when you update.\n", encoding="utf-8")
     (out / "app.json").write_text(json.dumps(app_json(version), indent=2) + "\n", encoding="utf-8")
-    if exporter and (exporter / "manifest.json").exists():
-        shutil.copytree(exporter, out / "Exporter" / "PlannerDataExporter")
-        notes.append("exporter mod included")
-    else:
-        notes.append("exporter mod NOT included (not built on this PC: the game or the .NET SDK was not found)")
-    return notes
+    (out / "Exporter" / "source").mkdir(parents=True)
+    for name in EXPORTER_SOURCE:
+        shutil.copy2(ROOT / "tools" / "exporter" / name, out / "Exporter" / "source" / name)
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT / "dist" / "COI-Planner"))
     ap.add_argument("--ui", default=str(ROOT / "dist-single" / "coi-planner.html"))
-    ap.add_argument("--exporter", default=str(ROOT / "tools" / "exporter" / "build" / "PlannerDataExporter"))
     ap.add_argument("--version", default=None)
     ap.add_argument("--no-pip", action="store_true")
     ap.add_argument("--layout-only", action="store_true")
@@ -143,8 +140,7 @@ def main(argv=None) -> int:
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
-    for note in assemble(out, Path(a.ui), Path(a.exporter), a.version):
-        print(note)
+    assemble(out, Path(a.ui), a.version)
     if a.layout_only:
         return 0
     if os.name != "nt":

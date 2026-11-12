@@ -2,13 +2,15 @@
 // small Python backend as window.pywebview.api. In a plain browser none of this exists and the page behaves as before.
 export interface NativeState {
   native: true; dataDir: string; modsDir: string; modsDirExists: boolean;
-  bundled: boolean; bundledVersion: string | null; installed: boolean; installedVersion: string | null;
+  gameDir: string | null; canBuild: boolean; compiler: string; built: boolean; builtVersion: string | null; needsRebuild: boolean;
+  installed: boolean; installedVersion: string | null;
   exports: { name: string; bytes: number; modified: string }[]; summary: { exists: boolean; bytes: number };
 }
 export interface Result { ok: boolean; error?: string; cancelled?: boolean; state?: NativeState; [k: string]: unknown }
 export interface NativeApi {
   state(): Promise<NativeState>;
-  install_exporter(): Promise<Result>; uninstall_exporter(): Promise<Result>;
+  build_exporter(): Promise<Result>; install_exporter(): Promise<Result>; build_and_install(): Promise<Result>;
+  pick_game_folder(): Promise<Result>; uninstall_exporter(): Promise<Result>;
   summarize_latest(): Promise<Result>; read_summary(): Promise<Result>;
   open_exports_folder(): Promise<Result>; open_data_folder(): Promise<Result>;
   save_text(filename: string, text: string): Promise<Result>;

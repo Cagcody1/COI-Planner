@@ -48,21 +48,23 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
     if (native && ns) {
       const s = ns;
       const status = s.installed ? `installed${s.installedVersion ? " (v" + esc(s.installedVersion) + ")" : ""}` : "not installed";
+      const built = !s.canBuild ? "source missing" : !s.built ? "not built yet" : s.needsRebuild ? "game changed: rebuild" : "up to date";
       return `<div class="panel"><h2>Game-data exporter</h2>
       <div class="stats"><div class="stat"><b style="font-size:1rem">${status}</b><span>in the game's Mods folder</span></div>
-      <div class="stat"><b style="font-size:1rem">${s.bundled ? "v" + esc(s.bundledVersion ?? "?") : "not included"}</b><span>in this planner</span></div>
+      <div class="stat"><b style="font-size:1rem">${built}</b><span>built for your game</span></div>
       <div class="stat"><b>${s.exports.length}</b><span>exports found</span></div></div>
-      <div class="toolbar"><button class="btn" id="nInstall"${s.bundled ? "" : " disabled"}>${s.installed ? "Update exporter" : "Install exporter"}</button>
+      <p class="hint">Game: ${s.gameDir ? "<code>" + esc(s.gameDir) + "</code>" : "<b>not found</b>"} <button class="btn" id="nGame">Choose game folder…</button>${s.compiler === "none" ? " &nbsp;<b>No C# compiler found.</b>" : ""}</p>
+      <div class="toolbar"><button class="btn" id="nBuild"${s.canBuild ? "" : " disabled"}>${s.installed || s.built ? "Rebuild and update exporter" : "Build and install exporter"}</button>
       <button class="btn" id="nSummary"${s.exports.length ? "" : " disabled"}>Make summary of newest export</button>
       <button class="btn" id="nOpen"${s.installed ? "" : " disabled"}>Open exports folder</button>
       <button class="btn" id="nRemove"${s.installed ? "" : " disabled"}>${confirmRemove ? "Click again: delete mod AND exports" : "Remove exporter"}</button></div>
-      ${s.bundled ? "" : `<div class="box warn">The exporter is not part of this copy. It is only included when the planner is built on a PC that has the game installed.</div>`}
+      ${s.needsRebuild ? `<div class="box warn">Your game has changed since the exporter was built. Rebuild it so it matches the new version.</div>` : ""}
       ${nmsg}
       ${s.exports.length ? `<div class="tbl"><table><thead><tr><th>Export</th><th class="n">Size</th><th>Saved</th></tr></thead><tbody>${s.exports.map((x) => `<tr><td>${esc(x.name)}</td><td class="n">${kb(x.bytes)}</td><td>${esc(x.modified)}</td></tr>`).join("")}</tbody></table></div>` : ""}
-      <ol style="padding-left:18px;margin:12px 0 0"><li>Click <b>Install exporter</b>.</li>
+      <ol style="padding-left:18px;margin:12px 0 0"><li>Click <b>Build and install exporter</b>. The planner compiles the mod on this PC against your game, then copies it into the game's Mods folder.</li>
       <li>Start the game, enable <b>Planner Data Exporter</b> in the mod list and start a <b>new</b> map. Wait for it to load.</li>
       <li>Come back here: <b>Make summary</b> if the export is very large, then import it (the importer for this export is still being written; the older exporter's <code>machines_and_buildings.json</code> and <code>products.json</code> work today).</li>
-      <li>When you are done, <b>Remove exporter</b>. After a game update, update this planner and click <b>Update exporter</b>.</li></ol>
+      <li>When you are done, <b>Remove exporter</b>. After a game update, click <b>Rebuild and update exporter</b> (no new planner needed).</li></ol>
       <p class="note">Your data is stored in <code>${esc(s.dataDir)}</code> and moves with the program folder. Mods folder: <code>${esc(s.modsDir)}</code>${s.modsDirExists ? "" : " (not created yet)"}.</p></div>`;
     }
     return `<div class="panel"><h2>How to get the data from the game</h2>
@@ -90,7 +92,13 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <div class="sect">${msg}</div></div>
       ${rightPanel()}</div>`;
     const nb = (id: string, fn: () => Promise<void>) => { const b = el.querySelector<HTMLButtonElement>("#" + id); if (b) b.onclick = () => void fn().catch((e) => { nmsg = `<div class="box bad">${esc(e)}</div>`; render(); }); };
-    nb("nInstall", async () => { const r = await native!.install_exporter(); nmsg = r.ok ? `<div class="box good">Installed. Now start the game, enable <b>Planner Data Exporter</b> and start a new map.</div>` : `<div class="box bad">${esc(r.error)}</div>`; ns = r.state ?? (await native!.state()); render(); });
+    nb("nBuild", async () => {
+      nmsg = `<div class="box">Building the exporter for your game…</div>`; render();
+      const r = await native!.build_and_install();
+      nmsg = r.ok ? `<div class="box good">Built with the ${esc(r.compiler)} and installed. Now start the game, enable <b>Planner Data Exporter</b> and start a new map.</div>`
+        : `<div class="box bad">${esc(r.error)}${r.log ? `<details><summary>Compiler log (send this if it keeps failing)</summary><pre style="white-space:pre-wrap;font-size:.75rem">${esc(r.log)}</pre></details>` : ""}</div>`;
+      ns = r.state ?? (await native!.state()); render(); });
+    nb("nGame", async () => { const r = await native!.pick_game_folder(); if (!r.ok && !r.cancelled) nmsg = `<div class="box bad">${esc(r.error)}</div>`; ns = r.state ?? (await native!.state()); render(); });
     nb("nOpen", async () => { const r = await native!.open_exports_folder(); if (!r.ok) { nmsg = `<div class="box bad">${esc(r.error)}</div>`; render(); } });
     nb("nSummary", async () => { nmsg = `<div class="box">Summarizing… (a very large export can take a minute)</div>`; render();
       const r = await native!.summarize_latest();

@@ -22,13 +22,15 @@ Saved data (imported game data, designs, choices) is stored by the browser; use 
 ### Program window (the main way to use it)
 `desktop/` + `packaging/build_embedded.py` build **COI Planner as its own program window**: python.org's embeddable Python
 (like PocketApps / PocketBuilder) with pywebview showing the planner in Edge WebView2. A small Python backend
-(`desktop/planner_api.py`) does what a web page cannot: installs and removes the exporter mod in the game's `Mods` folder,
-lists and summarizes its exports, opens folders, saves files. Everything the program saves is in its `Data` folder, so the
+(`desktop/planner_api.py`) does what a web page cannot: **compiles the exporter mod on the user's PC against their game**
+(the .NET SDK's compiler if present, otherwise the C# compiler Windows ships with; the mod source is written in C# 5 for that),
+installs and removes it in the game's `Mods` folder, notices when the game has changed (rebuild button), lists and
+summarizes its exports, opens folders, saves files. Everything the program saves is in its `Data` folder, so the
 folder is portable. If the window cannot start it falls back to `COI-Planner-Browser.cmd` (Edge/Chrome app window).
 
 Built by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) from `pocketbuilder.json` in this repo (PocketBuilder
-reads recipes from repos whose name contains "pocket": rename the repo to **Pocket-COIPlanner**). The build compiles the
-exporter mod against the game on the build PC (optional step) and bundles it. PocketApps installs and updates it from the
+reads recipes from repos whose name contains "pocket": rename the repo to **Pocket-COIPlanner**). The package carries the mod's
+source (`Exporter/source`), not a prebuilt mod, so the build PC needs neither the game nor the .NET SDK. PocketApps installs and updates it from the
 GitHub release (`app.json` in the zip).
 
 Checked here: backend logic and packaging layout (`python -m pytest tests_py`), the page's native panel against a fake
