@@ -24,6 +24,11 @@ The mod skeleton and the reflection approach follow BalancerDataExporter (MIT, s
    (`PlannerDataExporter`). Send me that file: the first real run shows the exact structure of layouts and storages,
    and the planner's importer is then written against it.
 
+## If the export is huge
+The export can be hundreds of MB. Double-click `Summarize-Export.cmd` in the mod folder: it finds the newest export,
+runs `summarize.py` (Python 3 needed) and writes a few-hundred-kB `exports\planner-export-summary.json` with the
+structure, a few examples, and which fields make the file big. Send that file instead of the export.
+
 ## Output
 `protos` is grouped by the game's prototype type. Each entry is `{id, name, data}` where `data` is a reflective dump of
 the prototype's public members (depth 7). References to other prototypes are kept as `{"protoId": ...}`; cycles and

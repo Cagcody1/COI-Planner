@@ -47,7 +47,7 @@ New-Item -ItemType Directory -Force $out | Out-Null
 $refs = @('mscorlib', 'System', 'System.Core', 'netstandard', 'Mafi', 'Mafi.Core') | ForEach-Object { '/reference:' + (Join-Path $managed "$_.dll") }
 & dotnet $csc /nologo /target:library /nostdlib+ /langversion:latest "/out:$out\PlannerDataExporter.dll" @refs PlannerDataExporter.cs
 if ($LASTEXITCODE -ne 0) { throw 'Compilation failed (see the messages above; send them along if the game was updated).' }
-Copy-Item manifest.json, LICENSE-THIRD-PARTY -Destination $out
+Copy-Item manifest.json, LICENSE-THIRD-PARTY, summarize.py, Summarize-Export.cmd -Destination $out
 Write-Host "Mod folder ready: $out"
 
 if ($Install) {
