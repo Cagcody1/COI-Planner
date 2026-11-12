@@ -227,3 +227,37 @@ def test_recipe_in_the_repo_is_valid_for_pocketbuilder():
     assert r["name"] == "COI-Planner" and r["release"]["tag"] == "v{version}" and r["artifacts"] == ["dist/COI-Planner-Portable-v{version}.zip"]
     assert "dotnet" not in r["requires"] and not any("build.ps1" in str(b) for b in r["build"])          # the compile happens on the user's PC
     assert any("build_embedded.py" in str(b) for b in r["build"])
+
+
+def test_proxy_tools_is_installed_only_if_it_matches_the_pinned_hash(tmp_path):
+    sys.path.insert(0, str(ROOT / "packaging"))
+    import hashlib, io, tarfile
+    import build_embedded
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as t:
+        body = b"VERSION = 1\n"
+        info = tarfile.TarInfo("proxy_tools-0.1.0/proxy_tools/__init__.py"); info.size = len(body)
+        t.addfile(info, io.BytesIO(body))
+    good = buf.getvalue()
+    with pytest.raises(SystemExit, match="pinned SHA-256"):                  # wrong content is refused
+        build_embedded.install_proxy_tools(tmp_path, fetch=lambda url: good)
+    build_embedded.PROXY_TOOLS_SHA256 = hashlib.sha256(good).hexdigest()    # pretend the pin is for this file
+    try:
+        build_embedded.install_proxy_tools(tmp_path, fetch=lambda url: good)
+    finally:
+        build_embedded.PROXY_TOOLS_SHA256 = "ccb3751f529c047e2d8a58440d86b205303cf0fe8146f784d1cbcd94f0a28010"
+    assert (tmp_path / "proxy_tools" / "__init__.py").read_bytes() == b"VERSION = 1\n"
+
+
+def test_pinned_proxy_tools_download_is_the_real_file():
+    """Network check: the pinned URL still serves the file with the pinned hash (skipped offline)."""
+    import urllib.request
+    sys.path.insert(0, str(ROOT / "packaging"))
+    import build_embedded
+    try:
+        data = urllib.request.urlopen(build_embedded.PROXY_TOOLS_URL, timeout=20).read()
+    except OSError:
+        pytest.skip("no network")
+    import hashlib, io, tarfile
+    assert hashlib.sha256(data).hexdigest() == build_embedded.PROXY_TOOLS_SHA256
+    assert b"proxy_tools-0.1.0/proxy_tools/__init__.py" in [m.name.encode() for m in tarfile.open(fileobj=io.BytesIO(data)).getmembers()]

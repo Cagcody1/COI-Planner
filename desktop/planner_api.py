@@ -72,6 +72,12 @@ def _is_game(folder) -> bool:
     return bool(folder) and (Path(folder) / MANAGED / "Mafi.Core.dll").is_file()
 
 
+def _dialog(webview, kind: str):
+    """pywebview 6 has webview.FileDialog.SAVE / .FOLDER; older versions have SAVE_DIALOG / FOLDER_DIALOG."""
+    enum = getattr(webview, "FileDialog", None)
+    return getattr(enum, kind) if enum is not None and hasattr(enum, kind) else getattr(webview, kind + "_DIALOG")
+
+
 def _dll_stamp(game: Path) -> dict:
     st = (game / MANAGED / "Mafi.Core.dll").stat()
     return {"size": st.st_size, "mtime": int(st.st_mtime)}
@@ -241,7 +247,7 @@ class PlannerApi:
         win = self._window()
         if win is None:
             return {"ok": False, "error": "No window."}
-        picked = win.create_file_dialog(webview.FOLDER_DIALOG)
+        picked = win.create_file_dialog(_dialog(webview, "FOLDER"))
         if not picked:
             return {"ok": False, "cancelled": True}
         folder = Path(picked if isinstance(picked, str) else picked[0])
@@ -314,7 +320,7 @@ class PlannerApi:
         win = self._window()
         if win is None:
             return {"ok": False, "error": "No window."}
-        picked = win.create_file_dialog(webview.SAVE_DIALOG, save_filename=os.path.basename(filename))
+        picked = win.create_file_dialog(_dialog(webview, "SAVE"), save_filename=os.path.basename(filename))
         if not picked:
             return {"ok": False, "cancelled": True}
         path = picked if isinstance(picked, str) else picked[0]

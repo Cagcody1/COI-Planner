@@ -14,18 +14,28 @@
 Same packaging idea as PocketApps / PocketBuilder (Cagcody1).
 """
 import argparse
+import hashlib
+import io
 import json
 import os
 import shutil
 import subprocess
 import sys
+import tarfile
 import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEPS = ["pywebview>=5.0", "pythonnet>=3.0.3"]          # the window; wheels only, nothing is compiled on the build PC
+# The window libraries. All are installed as wheels (nothing is compiled on the build PC) except proxy_tools: a 6 kB
+# pure-Python helper that pywebview needs and that is published only as source. A wheels-only install makes pip call every
+# pywebview version "conflicting dependencies", and its source build is needless work, so build_embedded fetches that one
+# file itself and checks it against the SHA-256 pinned here.
+PROXY_TOOLS_URL = "https://files.pythonhosted.org/packages/f2/cf/77d3e19b7fabd03895caca7857ef51e4c409e0ca6b37ee6e9f7daa50b642/proxy_tools-0.1.0.tar.gz"
+PROXY_TOOLS_SHA256 = "ccb3751f529c047e2d8a58440d86b205303cf0fe8146f784d1cbcd94f0a28010"
+PIP_STEPS = [["--no-deps", "pywebview>=5.0"],                      # pywebview itself, without its dependency list
+             ["pythonnet>=3.0.3", "bottle", "typing_extensions"]]  # everything else it needs, resolved normally (wheels)
 ZIP_GLOB = "COI-Planner-Portable-v*.zip"
 LAST_WINDOWS_BUILD = {"3.11": "3.11.9", "3.12": "3.12.10", "3.13": "3.13.9"}
 
@@ -88,6 +98,22 @@ def fetch_embeddable(version: str, cache: Path) -> Path:
     raise SystemExit("could not download an embeddable Python from python.org"
                      + (":\n  " + "\n  ".join(problems) if problems else f" for the {version} series")
                      + f"\nCheck the internet connection, or put python-{version}-embed-amd64.zip into {cache}.")
+
+
+def install_proxy_tools(site: Path, fetch=None) -> None:
+    """Puts proxy_tools (one file, MIT, last release 0.1.0) into site-packages after checking the download's SHA-256."""
+    def download(url):
+        with urllib.request.urlopen(url, timeout=60) as r:
+            return r.read()
+    data = (fetch or download)(PROXY_TOOLS_URL)
+    if hashlib.sha256(data).hexdigest() != PROXY_TOOLS_SHA256:
+        raise SystemExit("proxy_tools download does not match its pinned SHA-256; refusing to use it")
+    with tarfile.open(fileobj=io.BytesIO(data)) as t:
+        member = t.getmember("proxy_tools-0.1.0/proxy_tools/__init__.py")
+        target = site / "proxy_tools"
+        target.mkdir(parents=True, exist_ok=True)
+        (target / "__init__.py").write_bytes(t.extractfile(member).read())
+    print("proxy_tools 0.1.0 installed (checked against the pinned SHA-256)")
 
 
 def app_json(version: str | None) -> dict:
@@ -155,7 +181,9 @@ def main(argv=None) -> int:
     site = py_dir / "Lib" / "site-packages"
     site.mkdir(parents=True)
     if not a.no_pip:
-        subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", "--only-binary=:all:", "--target", str(site)] + DEPS, check=True)
+        for step in PIP_STEPS:
+            subprocess.run([sys.executable, "-m", "pip", "install", "--quiet", "--only-binary=:all:", "--target", str(site)] + step, check=True)
+        install_proxy_tools(site)
     # Start the program exactly as its launcher does (the packaged python.exe, the script path) and let it check itself.
     r = subprocess.run([str(py_dir / "python.exe"), str(out / "app" / "coi_planner.py"), "--check"], capture_output=True, text=True, timeout=180)
     print(r.stdout.strip())
