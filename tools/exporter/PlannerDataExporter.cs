@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.1.3";
+    const string Version = "0.1.4";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 12000;
     const int MaxSeconds = 45;
@@ -63,16 +63,24 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         var e = v as IEnumerable;
         if (e != null) { foreach (var x in e) yield return x; yield break; }
         var t = v.GetType();
-        if (t.Name.StartsWith("ImmutableArray") || t.Name.StartsWith("ImmutableList")) {   // struct collections that aren't IEnumerable
+        if (IsImmutable(t)) {   // struct collections that aren't IEnumerable
             var getEnum = t.GetMethod("GetEnumerator", Type.EmptyTypes);
-            if (getEnum == null) yield break;
+            if (getEnum == null) {                                              // fall back to Length + indexer
+                var len = Member(v, "Length"); var idx = t.GetProperties().FirstOrDefault(x => x.GetIndexParameters().Length == 1);
+                if (!(len is int) || idx == null) yield break;
+                for (int i = 0; i < (int)len; i++) yield return idx.GetValue(v, new object[] { i });
+                yield break;
+            }
             var en = getEnum.Invoke(v, null);
             var move = en.GetType().GetMethod("MoveNext");
             while ((bool)move.Invoke(en, null)) yield return Member(en, "Current");
         }
     }
+    static bool IsImmutable(Type t) {
+        return t.Name.Contains("ImmutableArray") || t.Name.StartsWith("ImmutableList");
+    }
     static bool IsSequence(object v) {
-        return v is IEnumerable || v.GetType().Name.StartsWith("ImmutableArray") || v.GetType().Name.StartsWith("ImmutableList");
+        return v is IEnumerable || IsImmutable(v.GetType());
     }
     static object Dump(object v, int depth, List<object> path, bool expandProto = false) {
         if (v == null) return null;
@@ -136,22 +144,29 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         }
         return o;
     }
+    // Terrain/geometry data the planner never uses; it is by far the biggest part of every building.
+    static readonly HashSet<string> HeavyFields = new HashSet<string> {
+        "LayoutTiles", "TerrainVertices", "VehicleSurfaceHeights", "TrajectoryData", "TrainTrackHelper", "LanesTrajectories",
+        "LanesData", "LanesSpecs", "Upgrade", "AnimationParams", "CustomTokens", "OccupiedVertexToPillarIndex", "Pillars", "IconPath"
+    };
     static bool Skip(string name, Type type) {
-        return name == "Graphics" || name == "Strings" || name == "Mod" || name == "Gfx" || type.Name == "Gfx" || name.EndsWith("Graphics")
+        return HeavyFields.Contains(name) || name == "Graphics" || name == "Strings" || name == "Mod" || name == "Gfx" || type.Name == "Gfx" || name.EndsWith("Graphics")
             || typeof(Delegate).IsAssignableFrom(type) || type == typeof(IntPtr);
     }
 
     // ---- export ---------------------------------------------------------------------------------
     static int Priority(Proto p) {
-        if (p is EntityProto) return 0;
         var n = p.GetType().Name;
+        if (n.Contains("Product")) return 0;                                // names and kinds first: everything refers to them
         if (n.Contains("Recipe")) return 1;
-        if (n.Contains("Transport") || n.Contains("Storage")) return 2;
+        if (p is EntityProto) return n.Contains("Machine") || n.Contains("Transport") || n.Contains("Storage") ? 2 : 3;
         return 3;
     }
+    static readonly string[] Unwanted = { "Bridge", "Billboard", "Decoration", "RetainingWall", "Barrier", "Ruins", "Sandbox", "ProductsSource", "ProductsSink", "Pillar" };
     static bool Wanted(Proto p) {
-        if (p is EntityProto) return true;                                  // buildings, machines, storages: includes layouts
         var n = p.GetType().Name;
+        if (Unwanted.Any(u => n.Contains(u))) return false;                 // thousands of cosmetic/bridge pieces, hundreds of MB
+        if (p is EntityProto) return true;                                  // buildings, machines, storages: includes layouts
         return n.Contains("Recipe") || n.Contains("Product") || n.Contains("Transport") || n.Contains("Storage");
     }
     void Export() {
