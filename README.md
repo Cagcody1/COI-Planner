@@ -17,7 +17,10 @@ Every push to `main` is built and tested by GitHub Actions and published to GitH
 
 ## Portable version (single file)
 `npm run build:single` writes `dist-single/coi-planner.html` (~240 kB): the whole app and the bundled game data in one file you can open by double-click, copy to a USB stick, or email. GitHub builds it on every push to `main`: download it from the site at `/coi-planner.html` or as the `coi-planner-portable` artifact on the workflow run.
-Saved data (imported game data, designs, choices) is stored by the browser for the file's location; use **Download backup** / **Restore backup** on the Game data tab to move it between browsers or after moving the file.
+Saved data (imported game data, designs, choices) is stored by the browser; use **Download backup** / **Restore backup** on the Game data tab to move it between browsers or after moving the file.
+
+### Portable app (folder)
+`packaging/` holds a launcher (`COI-Planner.cmd`) and readme for a portable Windows folder: `COI-Planner.cmd`, `app\COI-Planner.html`, `Data\`. The launcher opens the planner in its own Edge/Chrome window with the browser profile kept in `Data\browser`, so saved data moves with the folder (checked in Chromium: data follows the Data folder, not the file path). It is built and zipped by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) (recipe `COI-Planner` in its `projects.json`), which downloads Node itself.
 
 ## Status
 | Milestone | State |
