@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.1.4";
+    const string Version = "0.1.5";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 12000;
     const int MaxSeconds = 45;
@@ -158,7 +158,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
     static int Priority(Proto p) {
         var n = p.GetType().Name;
         if (n.Contains("Product")) return 0;                                // names and kinds first: everything refers to them
-        if (n.Contains("Recipe")) return 1;
+        if (n.Contains("Recipe") || n.Contains("ResearchNode")) return 1;
         if (p is EntityProto) return n.Contains("Machine") || n.Contains("Transport") || n.Contains("Storage") ? 2 : 3;
         return 3;
     }
@@ -167,7 +167,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         var n = p.GetType().Name;
         if (Unwanted.Any(u => n.Contains(u))) return false;                 // thousands of cosmetic/bridge pieces, hundreds of MB
         if (p is EntityProto) return true;                                  // buildings, machines, storages: includes layouts
-        return n.Contains("Recipe") || n.Contains("Product") || n.Contains("Transport") || n.Contains("Storage");
+        return n.Contains("Recipe") || n.Contains("ResearchNode") || n.Contains("Product") || n.Contains("Transport") || n.Contains("Storage");
     }
     void Export() {
         var groups = new Dictionary<string, List<object>>();
