@@ -223,7 +223,7 @@ def test_packaging_layout(tmp_path):
 
 
 def test_recipe_in_the_repo_is_valid_for_pocketbuilder():
-    r = json.loads((ROOT / "pocketbuilder.json").read_text())
+    r = json.loads((ROOT / "pocketprogrammer.json").read_text())
     assert r["name"] == "COI-Planner" and r["release"]["tag"] == "v{version}" and r["artifacts"] == ["dist/COI-Planner-Portable-v{version}.zip"]
     assert "dotnet" not in r["requires"] and not any("build.ps1" in str(b) for b in r["build"])          # the compile happens on the user's PC
     assert any("build_embedded.py" in str(b) for b in r["build"])

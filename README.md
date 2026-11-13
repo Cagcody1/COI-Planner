@@ -28,7 +28,7 @@ installs and removes it in the game's `Mods` folder, notices when the game has c
 summarizes its exports, opens folders, saves files. Everything the program saves is in its `Data` folder, so the
 folder is portable. If the window cannot start it falls back to `COI-Planner-Browser.cmd` (Edge/Chrome app window).
 
-Built by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) from `pocketbuilder.json` in this repo (PocketBuilder
+Built by [PocketBuilder](https://github.com/Cagcody1/PocketBuilder) from `pocketprogrammer.json` in this repo (PocketBuilder
 reads recipes from repos whose name contains "pocket": rename the repo to **Pocket-COIPlanner**). The package carries the mod's
 source (`Exporter/source`), not a prebuilt mod, so the build PC needs neither the game nor the .NET SDK. PocketApps installs and updates it from the
 GitHub release (`app.json` in the zip).
