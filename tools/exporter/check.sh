@@ -11,7 +11,7 @@ mcs -out:"$OUT/harness.exe" test/Harness.cs stubs/GameStubs.cs PlannerDataExport
 T0=$(date +%s); timeout 20 mono "$OUT/harness.exe" "$OUT/run"; echo "export took $(( $(date +%s) - T0 )) s"
 python3 -I - "$OUT/run/exports" <<'PY'
 import glob, json, sys
-d = json.load(open(glob.glob(sys.argv[1] + "/*.json")[0]))
+d = json.load(open(glob.glob(sys.argv[1] + "/planner-data-*.json")[0]))
 assert d["errors"] == [], d["errors"]
 assert set(d["protos"]) == {"FakeMachine", "FakeRecipeProto"}, list(d["protos"])      # Unwanted and bridge pieces are filtered out
 m = d["protos"]["FakeMachine"][0]["data"]
@@ -26,5 +26,6 @@ assert "LayoutTiles" not in m["Layout"]                                         
 assert "Graphics" not in m and "Callback" not in m["Layout"]                                  # graphics / delegates skipped
 assert m["Mesh"] == {"skipped": "UnityEngine.Mesh"}                                              # engine objects are not walked
 assert "truncated" in json.dumps(m["Graph"]) and len(json.dumps(d)) < 100000                   # endless graphs are cut off, output stays small
+assert json.load(open(sys.argv[1] + "/blueprint-api.json"))["types"] is not None                       # the blueprint API listing is written too
 print("fake-database run OK:", d["protoCount"], "prototypes")
 PY

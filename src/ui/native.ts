@@ -11,7 +11,7 @@ export interface NativeApi {
   state(): Promise<NativeState>;
   build_exporter(): Promise<Result>; install_exporter(): Promise<Result>; build_and_install(): Promise<Result>;
   pick_game_folder(): Promise<Result>; uninstall_exporter(): Promise<Result>;
-  summarize_latest(): Promise<Result>; read_summary(): Promise<Result>; read_latest_export(): Promise<Result>;
+  summarize_latest(): Promise<Result>; read_summary(): Promise<Result>; read_latest_export(): Promise<Result>; read_blueprint_api(): Promise<Result>;
   open_exports_folder(): Promise<Result>; open_data_folder(): Promise<Result>;
   save_text(filename: string, text: string): Promise<Result>;
 }

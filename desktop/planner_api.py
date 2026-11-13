@@ -293,6 +293,15 @@ class PlannerApi:
             return {"ok": False, "error": "The summary is over 3 MB; attach the file instead.", "path": str(f)}
         return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f)}
 
+    def read_blueprint_api(self) -> dict:
+        """The game's blueprint classes and methods as listed by the exporter (blueprint-api.json), to copy into a message."""
+        f = self._exports / "blueprint-api.json"
+        if not f.is_file():
+            return {"ok": False, "error": "Not written yet. Rebuild the exporter, then start the game with it enabled and start a map."}
+        if f.stat().st_size > 3_000_000:
+            return {"ok": False, "error": "The file is over 3 MB; attach it instead.", "path": str(f)}
+        return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f), "bytes": f.stat().st_size}
+
     def read_latest_export(self) -> dict:
         """The text of the newest export, for the planner to import (refuses anything over 200 MB)."""
         files = sorted(self._exports.glob("planner-data-*.json"), key=lambda p: p.stat().st_mtime, reverse=True) if self._exports.is_dir() else []

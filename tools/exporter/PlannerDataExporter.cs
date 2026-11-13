@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.1.5";
+    const string Version = "0.2.0";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 12000;
     const int MaxSeconds = 45;
@@ -34,6 +34,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
     void IMod.Initialize(DependencyResolver resolver, bool gameWasLoaded) {
         if (database == null) return;
         try { Export(); } catch (Exception error) { Log.Error("PlannerDataExporter: " + error); }
+        try { ExportBlueprintApi(); } catch (Exception error) { Log.Error("PlannerDataExporter (blueprint api): " + error); }
     }
 
     static Dictionary<string, object> Obj(params object[] kv) {
@@ -204,6 +205,45 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         var path = Path.Combine(folder, "planner-data-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ".json");
         File.WriteAllText(path, Json(package), new UTF8Encoding(false));
         Log.Info("PlannerDataExporter: wrote " + count + " prototypes to " + path + " in " + clock.Elapsed.TotalSeconds.ToString("0.0", CultureInfo.InvariantCulture) + " s");
+    }
+
+    // ---- blueprint API discovery ------------------------------------------------------------------
+    // Lists the game's blueprint classes and their methods, so the planner can be written against the real serializer.
+    static string TypeName(Type t) { try { return t.ToString(); } catch { return "?"; } }
+    static object Sig(MethodBase m) {
+        var ps = new List<object>();
+        try { foreach (var p in m.GetParameters()) ps.Add(TypeName(p.ParameterType) + " " + p.Name); } catch { }
+        var mi = m as MethodInfo;
+        return Obj("name", m.Name, "static", m.IsStatic, "public", m.IsPublic, "params", ps, "returns", mi == null ? "ctor" : TypeName(mi.ReturnType));
+    }
+    void ExportBlueprintApi() {
+        var types = new List<object>(); int seen = 0;
+        const BindingFlags all = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
+            var an = asm.GetName().Name;
+            if (!an.StartsWith("Mafi")) continue;
+            Type[] list; try { list = asm.GetTypes(); } catch (ReflectionTypeLoadException e) { list = e.Types.Where(x => x != null).ToArray(); } catch { continue; }
+            foreach (var t in list) {
+                var n = t.FullName ?? t.Name;
+                bool bp = n.IndexOf("Blueprint", StringComparison.OrdinalIgnoreCase) >= 0;
+                bool ser = n.EndsWith("BlobWriter") || n.EndsWith("BlobReader") || n.EndsWith("BlueprintSerializer");
+                if (!bp && !ser) continue;
+                seen++;
+                var methods = new List<object>(); var fields = new List<object>(); var props = new List<object>();
+                try { foreach (var m in t.GetMethods(all)) if (!m.IsSpecialName) methods.Add(Sig(m)); foreach (var c in t.GetConstructors(all)) methods.Add(Sig(c)); } catch { }
+                try { foreach (var f in t.GetFields(all)) fields.Add(Obj("name", f.Name, "type", TypeName(f.FieldType), "static", f.IsStatic, "public", f.IsPublic)); } catch { }
+                try { foreach (var p in t.GetProperties(all)) props.Add(Obj("name", p.Name, "type", TypeName(p.PropertyType), "canRead", p.CanRead, "canWrite", p.CanWrite)); } catch { }
+                var ifaces = new List<object>(); try { foreach (var i in t.GetInterfaces()) ifaces.Add(TypeName(i)); } catch { }
+                types.Add(Obj("assembly", an, "type", n, "kind", t.IsEnum ? "enum" : t.IsInterface ? "interface" : t.IsValueType ? "struct" : t.IsAbstract && t.IsSealed ? "static class" : t.IsAbstract ? "abstract class" : "class",
+                    "base", t.BaseType == null ? null : TypeName(t.BaseType), "interfaces", ifaces, "fields", fields, "properties", props, "methods", methods,
+                    "enumValues", t.IsEnum ? (object)Enum.GetNames(t) : null));
+            }
+        }
+        var folder = Path.Combine(Manifest.RootDirectoryPath, "exports");
+        Directory.CreateDirectory(folder);
+        var path = Path.Combine(folder, "blueprint-api.json");
+        File.WriteAllText(path, Json(Obj("exporter", "PlannerDataExporter " + Version, "typeCount", seen, "types", types)), new UTF8Encoding(false));
+        Log.Info("PlannerDataExporter: wrote " + seen + " blueprint-related types to " + path);
     }
 
     // ---- minimal JSON writer ----------------------------------------------------------------------

@@ -160,7 +160,7 @@ def test_page_cannot_reach_private_helpers(env):
     program, mods, api = env
     public = [n for n in dir(api) if not n.startswith("_")]
     assert set(public) == {"state", "build_exporter", "install_exporter", "build_and_install", "pick_game_folder", "uninstall_exporter",
-                           "summarize_latest", "read_summary", "read_latest_export", "open_exports_folder", "open_data_folder", "save_text"}
+                           "summarize_latest", "read_summary", "read_latest_export", "read_blueprint_api", "open_exports_folder", "open_data_folder", "save_text"}
 
 
 def test_entry_point_check_reports_missing_page(tmp_path, monkeypatch, capsys):
