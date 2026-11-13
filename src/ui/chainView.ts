@@ -2,6 +2,7 @@ import type { GameData } from "../data/schema";
 import { pickRecipe, solveChain, type ChainNode } from "../engine/chain";
 import { totalCosts } from "../engine/costs";
 import { fmt, producers } from "../engine/rates";
+import { recipeResearch, requiredResearch } from "../engine/unlocks";
 import { esc, pref } from "./store";
 
 export function mountChain(el: HTMLElement, getData: () => GameData) {
@@ -23,11 +24,20 @@ export function mountChain(el: HTMLElement, getData: () => GameData) {
     const r = solveChain(data, target, rate, opt);
     const c = totalCosts(data, r.machines);
     const names = new Map(data.machines.map((m) => [m.id, m.name]));
+    const rNames = new Map((data.research ?? []).map((n) => [n.id, n.name]));
+    const done = new Set<string>(pref.get<string[]>("coi-research-done", []));
+    const used: { recipeId: string; machineId: string }[] = [];
+    const walk = (n: ChainNode) => { if (n.recipe && !n.stop) used.push({ recipeId: n.recipe.id, machineId: n.recipe.machineId }); n.children.forEach(walk); };
+    walk(r.tree);
+    const need = rNames.size ? requiredResearch(data, used, done) : null;
+    const hrs = (sec: number) => (sec >= 3600 ? (sec / 3600).toFixed(1) + " h" : Math.round(sec / 60) + " min");
 
     const node = (n: ChainNode, depth: number): string => {
       let h = `<div class="${depth ? "node" : ""}"><div class="trow"><span class="it">${esc(n.product)}</span><span class="rate">${fmt(n.perMin, 2)}/min</span>`;
       if (n.stop) h += `<span class="raw">${n.stop === "raw" ? "raw input" : n.stop === "loop" ? "loop, stopped" : "supplied"}</span>`;
       else if (n.recipe) h += `<span class="mc">${fmt(n.machines!, 2)} × ${esc(names.get(n.recipe.machineId) ?? n.recipe.machineId)}</span>`;
+      const rid = n.recipe && !n.stop ? recipeResearch(data, n.recipe.id, n.recipe.machineId) : undefined;
+      if (rid && rNames.has(rid)) h += `<span class="raw" title="Research that unlocks this recipe${done.has(rid) ? " (marked done)" : ""}">${done.has(rid) ? "✓ " : "🔬 "}${esc(rNames.get(rid)!)}</span>`;
       const ps = producers(data, n.product);
       if (ps.length > 1 && n.stop !== "raw") {
         h += `<select data-pick="${esc(n.product)}" aria-label="Recipe for ${esc(n.product)}">${ps.map((p) => `<option value="${esc(p.id)}"${p.id === n.recipe?.id ? " selected" : ""}>${esc(names.get(p.machineId) ?? p.machineId)} · ${esc(p.label ?? p.id)} (${p.durationSec}s)</option>`).join("")}</select>`;
@@ -47,6 +57,9 @@ export function mountChain(el: HTMLElement, getData: () => GameData) {
       <div class="sect">${node(r.tree, 0)}</div></div>
       <div class="panel"><h2>Totals</h2>
       <div class="stats"><div class="stat"><b>${c.workers}</b><span>workers</span></div><div class="stat"><b>${fmt(c.electricityMw, 2)}</b><span>MW</span></div><div class="stat"><b>${c.computing}</b><span>computing</span></div></div>
+      ${need ? `<div class="sect"><label class="lbl">Research needed${need.todo.length ? ` · ${need.todo.length} to do, ${hrs(need.seconds)}` : ""}</label>${need.all.length
+        ? `<div class="tbl"><table><tbody>${need.all.map((n) => `<tr><td>${done.has(n.id) ? "✓ " : ""}${esc(n.name)}${need.direct.has(n.id) ? "" : ' <span class="hint">(prerequisite)</span>'}</td><td class="n">${hrs(n.durationSec)}</td></tr>`).join("")}</tbody></table></div>`
+        : `<p class="hint">Nothing to research: every step here is unlocked from the start.</p>`}<p class="hint">Mark finished research on the Research tree tab (double-click a node).</p></div>` : ""}
       <label class="lbl">Machines</label><div class="tbl"><table><thead><tr><th>Machine</th><th class="n">Exact</th><th class="n">Build</th></tr></thead><tbody>${tbl(r.machines, true)}</tbody></table></div>
       <div class="sect"><label class="lbl">Raw &amp; supplied inputs / min</label><div class="tbl"><table><tbody>${kv(r.inputs)}</tbody></table></div></div>
       <div class="sect"><label class="lbl">Byproducts to handle / min</label><div class="tbl"><table><tbody>${kv(r.byproducts)}</tbody></table></div></div>

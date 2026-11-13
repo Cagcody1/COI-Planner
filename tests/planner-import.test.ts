@@ -74,3 +74,17 @@ describe("bundled game 0.8.8d data (from the owner's own game)", () => {
     expect(d.transports.find((t) => t.id === "FlatConveyorT3")!.throughputPerMin).toBe(450);
   });
 });
+
+import { requiredResearch } from "../src/engine/unlocks";
+describe("research needed for a chain", () => {
+  const d: GameData = JSON.parse(readFileSync("data/0.8.8d/gamedata.json", "utf8"));
+  it("lists the unlocking node and its prerequisites, prerequisites first", () => {
+    const r = requiredResearch(d, [{ recipeId: "FoodMill:WheatMilling", machineId: "FoodMill" }]);
+    expect(r.direct.size).toBe(1);
+    const ids = r.all.map((n) => n.id), last = ids[ids.length - 1];
+    expect(r.direct.has(last)).toBe(true);
+    for (const n of r.all) for (const p of n.parents) expect(ids.indexOf(p)).toBeLessThan(ids.indexOf(n.id));
+    const done = requiredResearch(d, [{ machineId: "FoodMill" }], new Set(ids));
+    expect(done.todo).toEqual([]);
+  });
+});
