@@ -1,5 +1,5 @@
 {
-  "_comment": "Build recipe read by PocketBuilder from this repo (it reads repos whose name contains 'pocket': rename the repo to Pocket-COIPlanner). Keep it in sync with packaging/build_embedded.py and the README: if you change a build step, the version file, an artifact or the zip name, update this file in the same commit.",
+  "_comment": "Build recipe read by Pocket Programmer (formerly PocketBuilder) from this repo; it reads repos whose name contains 'pocket'. Keep it in sync with packaging/build_embedded.py and the README: if you change a build step, the version file, an artifact or the zip name, update this file in the same commit.",
   "name": "COI-Planner",
   "python": "3.12",
   "version": {
