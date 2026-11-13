@@ -39,3 +39,8 @@ td{padding:6px;border-bottom:1px solid var(--line);vertical-align:top}
 .note{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:10px;margin-top:14px}
 #dMatrix td,#dMatrix th{text-align:center;padding:4px}#dMatrix td:first-child,#dMatrix th:first-child{text-align:left}
 code{font:.85em ui-monospace,monospace;background:var(--bg);padding:1px 4px;border-radius:3px}
+.rwrap{overflow:auto;max-height:68vh;border:1px solid var(--line);border-radius:4px;background:var(--bg);margin-top:10px}
+.rcanvas{position:relative}.rcanvas svg{position:absolute;left:0;top:0;pointer-events:none}
+.rnode{position:absolute;box-sizing:border-box;text-align:left;font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:4px;padding:5px 8px;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.rnode b{font-size:.8rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rnode span{font-size:.7rem;color:var(--muted)}
+.rnode.sel{border-color:var(--accent,#d9822b);box-shadow:0 0 0 2px var(--accent,#d9822b)}.rnode.done{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--panel))}.rnode.hit{outline:2px solid var(--warn)}

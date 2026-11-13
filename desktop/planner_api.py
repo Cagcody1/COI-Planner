@@ -293,6 +293,18 @@ class PlannerApi:
             return {"ok": False, "error": "The summary is over 3 MB; attach the file instead.", "path": str(f)}
         return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f)}
 
+    def read_latest_export(self) -> dict:
+        """The text of the newest export, for the planner to import (refuses anything over 200 MB)."""
+        files = sorted(self._exports.glob("planner-data-*.json"), key=lambda p: p.stat().st_mtime, reverse=True) if self._exports.is_dir() else []
+        if not files:
+            return {"ok": False, "error": "No export found yet. Install the exporter, start the game with it enabled and start a NEW map."}
+        if files[0].stat().st_size > 200_000_000:
+            return {"ok": False, "error": f"{files[0].name} is too large to import. Rebuild the exporter (newer versions export far less) and export again."}
+        try:
+            return {"ok": True, "name": files[0].name, "text": files[0].read_text(encoding="utf-8")}
+        except OSError as e:
+            return {"ok": False, "error": f"Could not read {files[0].name}: {e}"}
+
     # -- folders and files -------------------------------------------------------------------------------------
     def open_exports_folder(self) -> dict:
         return self._open(self._exports)

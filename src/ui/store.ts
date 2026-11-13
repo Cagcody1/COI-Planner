@@ -1,5 +1,5 @@
-import bundled from "../../data/0.8.1a-b550-Update-4/gamedata.json";
-import bundledLines from "../../data/0.8.1a-b550-Update-4/lines.json";
+import bundled from "../../data/0.8.8d/gamedata.json";
+import bundledLines from "../../data/0.8.8d/lines.json";
 import { validateGameData, type GameData } from "../data/schema";
 import type { ProductLine } from "../engine/flexloop";
 

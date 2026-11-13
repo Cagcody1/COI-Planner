@@ -1,4 +1,5 @@
 import { importCod } from "../data/importCod";
+import { importPlanner, isPlannerExport, type ImportResult } from "../data/importPlanner";
 import { summarizeExport } from "../data/summarize";
 import { diffData } from "../data/diff";
 import { validateGameData, type GameData } from "../data/schema";
@@ -10,26 +11,30 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
   let native: NativeApi | null = null, ns: NativeState | null = null, nmsg = "", confirmRemove = false;
   const refreshNative = async () => { if (native) { ns = await native.state(); render(); } };
   void whenNative().then(async (a) => { native = a; if (a) await refreshNative(); });
+  function applyImport(res: ImportResult) {
+    const errs = validateGameData(res.data);
+    if (errs.length) throw new Error("Imported data is invalid: " + errs.slice(0, 3).join("; "));
+    const d = diffData(getData(), res.data);
+    const lineIssues = checkLines(res.data, LINES);
+    const saved = saveUserData(res.data);
+    msg = `<div class="box good"><b>Imported game ${esc(res.data.meta.gameVersion)}</b>: ${res.data.recipes.length} recipes, ${res.data.machines.length} machines, ${res.data.products.length} products${res.data.research?.length ? `, ${res.data.research.length} research nodes` : ""}. ${saved ? "Saved in this browser." : "Could not save (storage blocked); it will be lost on reload."}</div>`
+      + (res.warnings.length ? `<div class="box warn"><b>${res.warnings.length} warning(s)</b><br>${res.warnings.slice(0, 8).map(esc).join("<br>")}</div>` : "")
+      + (lineIssues.length ? `<div class="box bad"><b>Product lines need attention</b><br>${lineIssues.map(esc).join("<br>")}</div>` : "")
+      + diffHtml(d);
+    onChange();
+  }
   async function onFiles(files: FileList) {
     const got: Record<string, unknown> = {};
     try {
+      let planner: unknown = null;
       for (const f of Array.from(files)) {
         const j = JSON.parse(await f.text());
-        if (j.machines_and_buildings) got.machines_and_buildings = j;
+        if (isPlannerExport(j)) planner = j;
+        else if (j.machines_and_buildings) got.machines_and_buildings = j;
         else if (j.products) got.products = j;
         else if (j.transports) got.transports = j;
       }
-      const res = importCod(got as never);
-      const errs = validateGameData(res.data);
-      if (errs.length) throw new Error("Imported data is invalid: " + errs.slice(0, 3).join("; "));
-      const d = diffData(getData(), res.data);
-      const lineIssues = checkLines(res.data, LINES);
-      const saved = saveUserData(res.data);
-      msg = `<div class="box good"><b>Imported game ${esc(res.data.meta.gameVersion)}</b>: ${res.data.recipes.length} recipes, ${res.data.machines.length} machines, ${res.data.products.length} products. ${saved ? "Saved in this browser." : "Could not save (storage blocked); it will be lost on reload."}</div>`
-        + (res.warnings.length ? `<div class="box warn"><b>${res.warnings.length} warning(s)</b><br>${res.warnings.slice(0, 8).map(esc).join("<br>")}</div>` : "")
-        + (lineIssues.length ? `<div class="box bad"><b>Product lines need attention</b><br>${lineIssues.map(esc).join("<br>")}</div>` : "")
-        + diffHtml(d);
-      onChange();
+      applyImport(planner ? importPlanner(planner) : importCod(got as never));
     } catch (e) {
       msg = `<div class="box bad">${esc((e as Error).message)}</div>`;
     }
@@ -55,6 +60,7 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <div class="stat"><b>${s.exports.length}</b><span>exports found</span></div></div>
       <p class="hint">Game: ${s.gameDir ? "<code>" + esc(s.gameDir) + "</code>" : "<b>not found</b>"} <button class="btn" id="nGame">Choose game folder…</button>${s.compiler === "none" ? " &nbsp;<b>No C# compiler found.</b>" : ""}</p>
       <div class="toolbar"><button class="btn" id="nBuild"${s.canBuild ? "" : " disabled"}>${s.installed || s.built ? "Rebuild and update exporter" : "Build and install exporter"}</button>
+      <button class="btn" id="nImport"${s.exports.length ? "" : " disabled"}>Import newest export</button>
       <button class="btn" id="nSummary"${s.exports.length ? "" : " disabled"}>Make summary of newest export</button>
       <button class="btn" id="nOpen"${s.installed ? "" : " disabled"}>Open exports folder</button>
       <button class="btn" id="nRemove"${s.installed ? "" : " disabled"}>${confirmRemove ? "Click again: delete mod AND exports" : "Remove exporter"}</button></div>
@@ -63,7 +69,7 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       ${s.exports.length ? `<div class="tbl"><table><thead><tr><th>Export</th><th class="n">Size</th><th>Saved</th></tr></thead><tbody>${s.exports.map((x) => `<tr><td>${esc(x.name)}</td><td class="n">${kb(x.bytes)}</td><td>${esc(x.modified)}</td></tr>`).join("")}</tbody></table></div>` : ""}
       <ol style="padding-left:18px;margin:12px 0 0"><li>Click <b>Build and install exporter</b>. The planner compiles the mod on this PC against your game, then copies it into the game's Mods folder.</li>
       <li>Start the game, enable <b>Planner Data Exporter</b> in the mod list and start a <b>new</b> map. Wait for it to load.</li>
-      <li>Come back here: <b>Make summary</b> if the export is very large, then import it (the importer for this export is still being written; the older exporter's <code>machines_and_buildings.json</code> and <code>products.json</code> work today).</li>
+      <li>Come back here and click <b>Import newest export</b> (use <b>Make summary</b> only if you want to send me the file): it loads the products, recipes, machines, storages, conveyors and the research tree straight from your game.</li>
       <li>When you are done, <b>Remove exporter</b>. After a game update, click <b>Rebuild and update exporter</b> (no new planner needed).</li></ol>
       <p class="note">Your data is stored in <code>${esc(s.dataDir)}</code> and moves with the program folder. Mods folder: <code>${esc(s.modsDir)}</code>${s.modsDirExists ? "" : " (not created yet)"}.</p></div>`;
     }
@@ -104,6 +110,13 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       const r = await native!.summarize_latest();
       nmsg = r.ok ? `<div class="box good">Summary of ${esc(r.source)} saved: ${kb(Number(r.bytes))}, ${r.types} kinds of prototype, ${r.prototypes} prototypes. <button class="btn" id="nCopy">Show text to copy</button> <button class="btn" id="nOpen2">Open folder</button></div>` : `<div class="box bad">${esc(r.error)}</div>`;
       ns = await native!.state(); render(); });
+    nb("nImport", async () => {
+      nmsg = `<div class="box">Reading the export…</div>`; render();
+      const r = await native!.read_latest_export();
+      nmsg = "";
+      try { if (!r.ok) throw new Error(String(r.error)); applyImport(importPlanner(JSON.parse(String(r.text)))); }
+      catch (e) { msg = `<div class="box bad">${esc((e as Error).message)}</div>`; }
+      render(); });
     nb("nRemove", async () => {
       if (!confirmRemove) { confirmRemove = true; render(); return; }
       confirmRemove = false; const r = await native!.uninstall_exporter();

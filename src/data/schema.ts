@@ -2,7 +2,7 @@
 export type ProductKind = "unit" | "loose" | "fluid" | "molten" | "virtual";
 export interface Stack { product: string; qty: number }
 export interface Product { id: string; name: string; kind: ProductKind; icon?: string }
-export interface Port { x: number; y: number; dir: "N" | "E" | "S" | "W"; kind: string }
+export interface Port { x: number; y: number; dir: "N" | "E" | "S" | "W"; kind: string; name?: string; io?: "in" | "out" | "any" }
 export interface Machine {
   id: string; name: string; family: string; tier: number;
   workers?: number; electricityKw?: number; computing?: number;
@@ -10,10 +10,11 @@ export interface Machine {
   footprint?: { w: number; h: number };
   ports?: Port[];
   buildCost?: Stack[];
+  unlockedBy?: string;      // research node id
 }
 export interface Recipe {
   id: string; machineId: string; durationSec: number;
-  inputs: Stack[]; outputs: Stack[]; label?: string;
+  inputs: Stack[]; outputs: Stack[]; label?: string; unlockedBy?: string;
 }
 export interface Transport {
   id: string; name: string; tier: number; kind: string;
@@ -23,10 +24,15 @@ export interface Storage {
   id: string; name: string; tier: number; kind: string;
   capacity: number; transferPerMin?: number; ports?: Port[];
 }
+export interface Unlock { kind: "machine" | "building" | "recipe" | "product" | "other"; id: string; title?: string; machine?: string }
+export interface ResearchNode {
+  id: string; name: string; durationSec: number; parents: string[]; x: number; y: number;
+  description?: string; unlocks: Unlock[]; startUnlocked?: boolean; anyParent?: boolean;
+}
 export interface Meta { gameVersion: string; exportedAt: string; source: string }
 export interface GameData {
   meta: Meta; products: Product[]; machines: Machine[]; recipes: Recipe[];
-  transports: Transport[]; storages: Storage[];
+  transports: Transport[]; storages: Storage[]; research?: ResearchNode[];
 }
 
 const KINDS = new Set(["unit", "loose", "fluid", "molten", "virtual"]);

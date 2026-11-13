@@ -1,0 +1,70 @@
+[
+ {
+  "id": "CP",
+  "name": "Construction Parts",
+  "base": "CP I",
+  "assemblers": [
+   "AssemblyManual",
+   "AssemblyElectrified",
+   "AssemblyElectrifiedT2",
+   "AssemblyRoboticT1",
+   "AssemblyRoboticT2"
+  ],
+  "tiers": [
+   {
+    "product": "Construction Parts",
+    "short": "CP I",
+    "variants": {
+     "from Iron": "^CpAssemblyAssembly$",
+     "from Steel": "^CpAssemblySteel$"
+    }
+   },
+   {
+    "product": "Construction Parts II",
+    "short": "CP II"
+   },
+   {
+    "product": "Construction Parts III",
+    "short": "CP III"
+   },
+   {
+    "product": "Construction Parts IV",
+    "short": "CP IV"
+   }
+  ]
+ },
+ {
+  "id": "VP",
+  "name": "Vehicle Parts",
+  "base": "MP",
+  "assemblers": [
+   "AssemblyManual",
+   "AssemblyElectrified",
+   "AssemblyElectrifiedT2",
+   "AssemblyRoboticT1",
+   "AssemblyRoboticT2"
+  ],
+  "tiers": [
+   {
+    "product": "Mechanical Parts",
+    "short": "MP",
+    "variants": {
+     "from Iron": "^MechPartsIronAssembly$",
+     "from Steel": "^MechPartsSteelAssembly$"
+    }
+   },
+   {
+    "product": "Vehicle Parts",
+    "short": "VP I"
+   },
+   {
+    "product": "Vehicle Parts II",
+    "short": "VP II"
+   },
+   {
+    "product": "Vehicle Parts III",
+    "short": "VP III"
+   }
+  ]
+ }
+]
