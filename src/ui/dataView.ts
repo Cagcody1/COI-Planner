@@ -63,6 +63,8 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       <button class="btn" id="nImport"${s.exports.length ? "" : " disabled"}>Import newest export</button>
       <button class="btn" id="nSummary"${s.exports.length ? "" : " disabled"}>Make summary of newest export</button>
       <button class="btn" id="nBp" title="Lists the game's blueprint code so the planner can read and write blueprints">Show blueprint API</button>
+      <button class="btn" id="nBpSave" title="Gives the exporter a blueprint string to decode with the game's own code">Add test blueprint</button>
+      <button class="btn" id="nBpr" title="What the exporter found out about your blueprint library">Show blueprint probe</button>
       <button class="btn" id="nOpen"${s.installed ? "" : " disabled"}>Open exports folder</button>
       <button class="btn" id="nRemove"${s.installed ? "" : " disabled"}>${confirmRemove ? "Click again: delete mod AND exports" : "Remove exporter"}</button></div>
       ${s.needsRebuild ? `<div class="box warn">Your game has changed since the exporter was built. Rebuild it so it matches the new version.</div>` : ""}
@@ -119,6 +121,8 @@ export function mountData(el: HTMLElement, getData: () => GameData, isUser: () =
       catch (e) { msg = `<div class="box bad">${esc((e as Error).message)}</div>`; }
       render(); });
     nb("nBp", async () => { const r = await native!.read_blueprint_api(); nmsg = r.ok ? `<div class="box"><textarea readonly style="width:100%;height:12rem;font:12px ui-monospace,monospace">${esc(r.text)}</textarea><p class="hint">${kb(Number(r.bytes))}. Select all, copy, and paste it into the chat. File: <code>${esc(r.path)}</code></p></div>` : `<div class="box bad">${esc(r.error)}${r.path ? " <code>" + esc(r.path) + "</code>" : ""}</div>`; render(); });
+    nb("nBpr", async () => { const r = await native!.read_blueprint_probe(); nmsg = r.ok ? `<div class="box"><textarea readonly style="width:100%;height:12rem;font:12px ui-monospace,monospace">${esc(r.text)}</textarea><p class="hint">${kb(Number(r.bytes))}. Select all, copy, and paste it into the chat. File: <code>${esc(r.path)}</code></p></div>` : `<div class="box bad">${esc(r.error)}${r.path ? " <code>" + esc(r.path) + "</code>" : ""}</div>`; render(); });
+    nb("nBpSave", async () => { const t = prompt("Paste a blueprint string (B1234:...)"); if (!t) return; const r = await native!.save_blueprint_input(t); nmsg = r.ok ? `<div class="box">Saved. Restart the game and load a map; then click Show blueprint probe.</div>` : `<div class="box bad">${esc(r.error)}</div>`; render(); });
     nb("nRemove", async () => {
       if (!confirmRemove) { confirmRemove = true; render(); return; }
       confirmRemove = false; const r = await native!.uninstall_exporter();

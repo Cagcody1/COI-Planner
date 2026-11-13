@@ -21,12 +21,14 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.2.0";
+    const string Version = "0.3.0";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
-    const int MaxDepth = 6, MaxItems = 3000, MaxNodesPerProto = 12000;
+    const int MaxDepth = 6, MaxItems = 3000;
+    static int NodeLimit = 12000;
     const int MaxSeconds = 45;
     static int nodes;
     ProtosDb database;
+    DependencyResolver resolverRef;
 
     public PlannerDataExporter(ModManifest manifest) : base(manifest) {}
     public override void RegisterPrototypes(ProtoRegistrator registrator) {}
@@ -35,6 +37,8 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         if (database == null) return;
         try { Export(); } catch (Exception error) { Log.Error("PlannerDataExporter: " + error); }
         try { ExportBlueprintApi(); } catch (Exception error) { Log.Error("PlannerDataExporter (blueprint api): " + error); }
+        resolverRef = resolver;
+        try { var t = new System.Threading.Thread(BlueprintProbe); t.IsBackground = true; t.Start(); } catch (Exception error) { Log.Error("PlannerDataExporter (blueprint probe): " + error); }
     }
 
     static Dictionary<string, object> Obj(params object[] kv) {
@@ -93,7 +97,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         if (proto != null && !expandProto) return Obj("protoId", proto.Id.ToString());     // references to other prototypes stay ids
         if (typeof(Delegate).IsAssignableFrom(t)) return null;
         if (depth > MaxDepth) return Obj("truncated", t.FullName);
-        if (++nodes > MaxNodesPerProto) return Obj("truncated", "node limit");
+        if (++nodes > NodeLimit) return Obj("truncated", "node limit");
         var ns = t.Namespace ?? "";
         if (ns.StartsWith("UnityEngine") || ns.StartsWith("System.Reflection") || ns.StartsWith("System.Threading") || ns.StartsWith("System.IO"))
             return Obj("skipped", t.FullName);                                  // engine objects are slow/unsafe to walk
@@ -244,6 +248,99 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         var path = Path.Combine(folder, "blueprint-api.json");
         File.WriteAllText(path, Json(Obj("exporter", "PlannerDataExporter " + Version, "typeCount", seen, "types", types)), new UTF8Encoding(false));
         Log.Info("PlannerDataExporter: wrote " + seen + " blueprint-related types to " + path);
+    }
+
+    // ---- blueprint probe -------------------------------------------------------------------------
+    // Finds the game's blueprint library, exports every blueprint in it (name, folder, the game's own text string and a
+    // reflective dump of its contents), and decodes any text files in blueprints\in with the game's own parser, checking that
+    // writing the result back gives the same string. Everything it learns goes into exports\blueprint-probe.json.
+    static Type FindType(string fullName) {
+        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) { try { var t = asm.GetType(fullName, false); if (t != null) return t; } catch { } }
+        return null;
+    }
+    static IEnumerable<object> Seq(object v) {
+        if (v == null) yield break;
+        var e = v as IEnumerable;
+        if (e != null) { foreach (var x in e) yield return x; yield break; }
+        var count = Member(v, "Count");
+        var idx = v.GetType().GetProperties().FirstOrDefault(x => x.GetIndexParameters().Length == 1 && x.GetIndexParameters()[0].ParameterType == typeof(int));
+        if (count is int && idx != null) { for (int i = 0; i < (int)count; i++) yield return idx.GetValue(v, new object[] { i }); yield break; }
+        foreach (var x in Items(v)) yield return x;
+    }
+    object TryResolve(Type t, List<object> steps) {
+        if (resolverRef == null || t == null) return null;
+        foreach (var m in resolverRef.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
+            if (!m.IsGenericMethodDefinition || m.GetGenericArguments().Length != 1) continue;
+            if (m.Name.IndexOf("Resolve", StringComparison.OrdinalIgnoreCase) < 0 && m.Name.IndexOf("Get", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            var ps = m.GetParameters(); if (ps.Length != 0) continue;
+            try { var r = m.MakeGenericMethod(t).Invoke(resolverRef, null); steps.Add(Obj("method", m.Name, "ok", r != null)); if (r != null) return r; }
+            catch (Exception e) { steps.Add(Obj("method", m.Name, "error", e.InnerException != null ? e.InnerException.Message : e.Message)); }
+        }
+        return null;
+    }
+    static object Call(object target, Type type, string name, int argCount, object[] args) {
+        foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+            if (m.Name == name && m.GetParameters().Length == argCount && !m.IsGenericMethodDefinition) return m.Invoke(m.IsStatic ? null : target, args);
+        throw new MissingMethodException(type.Name + "." + name + "/" + argCount);
+    }
+    void BlueprintProbe() {
+        var probe = Obj("exporter", "PlannerDataExporter " + Version);
+        var steps = new List<object>(); probe["steps"] = steps;
+        try {
+            var folder = Path.Combine(Manifest.RootDirectoryPath, "exports"); Directory.CreateDirectory(folder);
+            var rm = new List<object>();
+            foreach (var m in resolverRef.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                if (m.DeclaringType != typeof(object)) rm.Add(Obj("name", m.Name, "generic", m.IsGenericMethodDefinition, "public", m.IsPublic, "params", Sig(m)));
+            probe["resolverType"] = TypeName(resolverRef.GetType()); probe["resolverMethods"] = rm;
+            var libType = FindType("Mafi.Core.Entities.Blueprints.BlueprintsLibrary");
+            probe["libraryType"] = libType == null ? null : libType.FullName;
+            var lib = TryResolve(libType, steps);
+            probe["libraryFound"] = lib != null;
+            object ctx = null;
+            if (lib != null) {
+                var f = libType.GetField("m_serializationContext", BindingFlags.NonPublic | BindingFlags.Instance);
+                ctx = f == null ? null : f.GetValue(lib);
+                for (int i = 0; i < 75; i++) { var st = Convert.ToString(Member(lib, "LibraryStatus")); probe["libraryStatus"] = st; if (st == "LoadSuccess" || st.StartsWith("LoadFailed") || st == "NoLibraryFound") break; System.Threading.Thread.Sleep(2000); }
+                var list = new List<object>(); NodeLimit = 150000;
+                Action<object, string> walk = null;
+                walk = (fld, path) => {
+                    foreach (var bp in Seq(Member(fld, "Blueprints"))) {
+                        var entry = Obj("folder", path, "name", Member(bp, "Name"), "description", Member(bp, "Desc"), "gameVersion", Member(bp, "GameVersion"));
+                        try { entry["itemCount"] = Items(Member(bp, "Items")).Count(); } catch (Exception e) { entry["itemCountError"] = e.Message; }
+                        try { entry["string"] = Call(lib, libType, "ConvertToString", 2, new object[] { bp, false }); } catch (Exception e) { entry["stringError"] = e.InnerException != null ? e.InnerException.Message : e.Message; }
+                        try { nodes = 0; entry["items"] = Dump(Member(bp, "Items"), 0, new List<object>(), true); } catch (Exception e) { entry["dumpError"] = e.Message; }
+                        list.Add(entry);
+                    }
+                    foreach (var sub in Seq(Member(fld, "Folders"))) walk(sub, path + "/" + Convert.ToString(Member(sub, "Name")));
+                };
+                walk(Member(lib, "Root"), "");
+                NodeLimit = 12000;
+                File.WriteAllText(Path.Combine(folder, "blueprint-library.json"), Json(Obj("exporter", "PlannerDataExporter " + Version, "count", list.Count, "blueprints", list)), new UTF8Encoding(false));
+                probe["libraryBlueprints"] = list.Count;
+            }
+            // decode test strings with the game's own parser
+            var tests = new List<object>(); probe["parseTests"] = tests;
+            var inDir = Path.Combine(Manifest.RootDirectoryPath, "blueprints", "in");
+            if (Directory.Exists(inDir) && libType != null) {
+                foreach (var file in Directory.GetFiles(inDir, "*.txt")) {
+                    var t = Obj("file", Path.GetFileName(file));
+                    tests.Add(t);
+                    try {
+                        var text = File.ReadAllText(file).Trim();
+                        var args = new object[] { text, ctx, null, null };
+                        var ok = Call(null, libType, "TryParseFromString", 4, args);
+                        t["parsed"] = ok; t["error"] = args[2];
+                        if (ok is bool && (bool)ok && args[3] != null) {
+                            var bp = args[3];
+                            t["name"] = Member(bp, "Name"); t["gameVersion"] = Member(bp, "GameVersion");
+                            try { nodes = 0; NodeLimit = 150000; t["items"] = Dump(Member(bp, "Items"), 0, new List<object>(), true); } finally { NodeLimit = 12000; }
+                            try { var back = Convert.ToString(Call(lib, libType, "ConvertToString", 2, new object[] { bp, false })); t["roundTripEqual"] = back == text; t["roundTripLength"] = back.Length; t["inputLength"] = text.Length; if (back != text) t["roundTripString"] = back; } catch (Exception e) { t["roundTripError"] = e.InnerException != null ? e.InnerException.Message : e.Message; }
+                        }
+                    } catch (Exception e) { t["exception"] = e.InnerException != null ? e.InnerException.ToString() : e.ToString(); }
+                }
+            }
+        } catch (Exception e) { probe["exception"] = e.ToString(); }
+        try { File.WriteAllText(Path.Combine(Manifest.RootDirectoryPath, "exports", "blueprint-probe.json"), Json(probe), new UTF8Encoding(false)); Log.Info("PlannerDataExporter: wrote blueprint-probe.json"); } catch { }
     }
 
     // ---- minimal JSON writer ----------------------------------------------------------------------

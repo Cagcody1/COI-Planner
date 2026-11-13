@@ -302,6 +302,26 @@ class PlannerApi:
             return {"ok": False, "error": "The file is over 3 MB; attach it instead.", "path": str(f)}
         return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f), "bytes": f.stat().st_size}
 
+    def read_blueprint_probe(self) -> dict:
+        """What the exporter learned about the game's blueprint library (blueprint-probe.json), to copy into a message."""
+        f = self._exports / "blueprint-probe.json"
+        if not f.is_file():
+            return {"ok": False, "error": "Not written yet. Rebuild the exporter, start the game with it enabled and load a map, wait a minute."}
+        if f.stat().st_size > 3_000_000:
+            return {"ok": False, "error": "The file is over 3 MB; attach it instead.", "path": str(f)}
+        return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f), "bytes": f.stat().st_size}
+
+    def save_blueprint_input(self, text: str) -> dict:
+        """Put a blueprint string where the exporter will decode it on the next map load (blueprints\\in\\planner.txt)."""
+        text = (text or "").strip()
+        if not text.startswith("B") or ":" not in text[:12] or len(text) > 5_000_000:
+            return {"ok": False, "error": "That does not look like a blueprint string (it starts with B1234:)."}
+        d = self._exports.parent / "blueprints" / "in"
+        d.mkdir(parents=True, exist_ok=True)
+        f = d / "planner.txt"
+        f.write_text(text, encoding="utf-8")
+        return {"ok": True, "path": str(f)}
+
     def read_latest_export(self) -> dict:
         """The text of the newest export, for the planner to import (refuses anything over 200 MB)."""
         files = sorted(self._exports.glob("planner-data-*.json"), key=lambda p: p.stat().st_mtime, reverse=True) if self._exports.is_dir() else []
