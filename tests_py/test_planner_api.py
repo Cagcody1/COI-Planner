@@ -59,7 +59,7 @@ def test_build_compiles_against_the_game_with_the_right_arguments(env):
     assert (out / "PlannerDataExporter.dll").is_file() and (out / "manifest.json").is_file() and (out / "summarize.py").is_file()
     args = json.loads((out / "PlannerDataExporter.dll.args.json").read_text())
     managed = api._game / "Captain of Industry_Data" / "Managed"
-    assert "/target:library" in args and "/nostdlib+" in args and "/langversion:latest" in args
+    assert "/noconfig" in args and "/target:library" in args and "/nostdlib+" in args and "/langversion:latest" in args
     assert f"/reference:{managed / 'Mafi.Core.dll'}" in args and f"/reference:{managed / 'mscorlib.dll'}" in args
     assert args[-1].endswith("PlannerDataExporter.cs")
     s = api.state()

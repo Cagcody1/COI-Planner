@@ -198,7 +198,7 @@ class PlannerApi:
         log = []
         used = None
         for label, prefix, modern in compilers:
-            cmd = prefix + ["/nologo", "/target:library", "/nostdlib+", f"/out:{dll}"] + (["/langversion:latest"] if modern else []) \
+            cmd = prefix + ["/nologo", "/noconfig", "/target:library", "/nostdlib+", f"/out:{dll}"] + (["/langversion:latest"] if modern else []) \
                 + [f"/reference:{r}" for r in refs] + [str(src / "PlannerDataExporter.cs")]
             try:
                 r = subprocess.run(cmd, capture_output=True, text=True, timeout=180, cwd=str(out),
