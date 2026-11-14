@@ -1,4 +1,5 @@
 import "./style.css";
+import { mountBlueprints } from "./ui/blueprintView";
 import { mountChain } from "./ui/chainView";
 import { mountData } from "./ui/dataView";
 import { mountDesign } from "./ui/designView";
@@ -11,10 +12,11 @@ const getData = () => active.data;
 
 const app = document.getElementById("app")!;
 app.innerHTML = `<div class="wrap"><header><h1><small>Captain of Industry · Blueprint aid</small>Factory Planner</h1>
-  <div class="tabs" role="tablist"><button role="tab" data-t="chain">Production chain</button><button role="tab" data-t="design">Factory designer</button><button role="tab" data-t="layout">Layout</button><button role="tab" data-t="research">Research tree</button><button role="tab" data-t="data">Game data</button></div></header>
-  <div id="stale"></div><section id="v-chain"></section><section id="v-design" hidden></section><section id="v-layout" hidden></section><section id="v-research" hidden></section><section id="v-data" hidden></section></div>`;
+  <div class="tabs" role="tablist"><button role="tab" data-t="chain">Production chain</button><button role="tab" data-t="design">Factory designer</button><button role="tab" data-t="layout">Layout</button><button role="tab" data-t="blueprints">Blueprints</button><button role="tab" data-t="research">Research tree</button><button role="tab" data-t="data">Game data</button></div></header>
+  <div id="stale"></div><section id="v-chain"></section><section id="v-design" hidden></section><section id="v-layout" hidden></section><section id="v-blueprints" hidden></section><section id="v-research" hidden></section><section id="v-data" hidden></section></div>`;
 const views = { chain: mountChain(document.getElementById("v-chain")!, getData), design: mountDesign(document.getElementById("v-design")!, getData),
   layout: mountLayout(document.getElementById("v-layout")!, getData),
+  blueprints: mountBlueprints(document.getElementById("v-blueprints")!, getData),
   research: mountResearch(document.getElementById("v-research")!, getData),
   data: mountData(document.getElementById("v-data")!, getData, () => active.user, () => { active = loadActive(); refresh(); }) };
 
@@ -34,4 +36,4 @@ function show(t: keyof typeof views) {
 }
 document.querySelectorAll<HTMLElement>("[data-t]").forEach((b) => (b.onclick = () => show(b.dataset.t as keyof typeof views)));
 refresh();
-show((["chain", "design", "layout", "research", "data"].find((t) => location.hash === "#" + t) ?? "chain") as keyof typeof views);
+show((["chain", "design", "layout", "blueprints", "research", "data"].find((t) => location.hash === "#" + t) ?? "chain") as keyof typeof views);

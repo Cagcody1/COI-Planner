@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.3.2";
+    const string Version = "0.3.3";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000;
     static int NodeLimit = 12000;
@@ -254,6 +254,40 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
     // Finds the game's blueprint library, exports every blueprint in it (name, folder, the game's own text string and a
     // reflective dump of its contents), and decodes any text files in blueprints\in with the game's own parser, checking that
     // writing the result back gives the same string. Everything it learns goes into exports\blueprint-probe.json.
+    static object Opt(object o) {   // Mafi.Option<T> -> value or null
+        if (o == null) return null;
+        var has = Member(o, "HasValue");
+        if (has is bool) return (bool)has ? Member(o, "Value") : null;
+        return o;
+    }
+    static string IdOf(object x) {
+        x = Opt(x); if (x == null) return null;
+        var id = Member(x, "Id"); return Convert.ToString(id != null ? id : x);
+    }
+    static List<object> Pt(object t) { return new List<object> { Member(t, "X"), Member(t, "Y"), Member(t, "Z") }; }
+    static object Compact(object bp) {
+        var list = new List<object>();
+        foreach (var it in Seq(Member(bp, "Items"))) {
+            try {
+                var e = Obj("proto", IdOf(Member(it, "Prototype")), "kind", Convert.ToString(Opt(Member(it, "EntityType"))));
+                var k = e["kind"] as string; if (k != null) { var dot = k.LastIndexOf('.'); if (dot >= 0) e["kind"] = k.Substring(dot + 1); }
+                var id = Member(Member(it, "OriginalEntityId"), "Value"); if (id != null) e["id"] = id;
+                var tr = Member(it, "Transform");
+                if (tr != null) { e["pos"] = Pt(Member(tr, "Position")); e["rot"] = Member(Member(tr, "Rotation"), "AngleIndex"); e["flip"] = Member(tr, "IsReflected"); }
+                var title = Opt(Member(it, "CustomTitle")); if (title != null) e["title"] = title;
+                var rec = Opt(Member(it, "Recipes"));
+                if (rec != null) { var rl = new List<object>(); foreach (var r in Seq(rec)) rl.Add(IdOf(r)); if (rl.Count > 0) e["recipes"] = rl; }
+                var tj = Opt(Member(it, "Trajectory"));
+                if (tj != null) {
+                    var pv = new List<object>(); foreach (var q in Seq(Member(tj, "Pivots"))) pv.Add(Pt(q));
+                    e["pivots"] = pv; e["startDir"] = Pt(Member(tj, "StartDirection")); e["endDir"] = Pt(Member(tj, "EndDirection"));
+                    e["maxProducts"] = Member(tj, "MaxProducts");
+                }
+                list.Add(e);
+            } catch (Exception ex) { list.Add(Obj("error", ex.Message)); }
+        }
+        return list;
+    }
     static Type FindType(string fullName) {
         foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) { try { var t = asm.GetType(fullName, false); if (t != null) return t; } catch { } }
         return null;
@@ -323,20 +357,19 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
                 var f = libType.GetField("m_serializationContext", BindingFlags.NonPublic | BindingFlags.Instance);
                 ctx = f == null ? null : f.GetValue(lib);
                 for (int i = 0; i < 75; i++) { var st = Convert.ToString(Member(lib, "LibraryStatus")); probe["libraryStatus"] = st; if (st == "LoadSuccess" || st.StartsWith("LoadFailed") || st == "NoLibraryFound") break; System.Threading.Thread.Sleep(2000); }
-                var list = new List<object>(); NodeLimit = 150000;
+                var list = new List<object>();
                 Action<object, string> walk = null;
                 walk = (fld, path) => {
                     foreach (var bp in Seq(Member(fld, "Blueprints"))) {
                         var entry = Obj("folder", path, "name", Member(bp, "Name"), "description", Member(bp, "Desc"), "gameVersion", Member(bp, "GameVersion"));
                         try { entry["itemCount"] = Items(Member(bp, "Items")).Count(); } catch (Exception e) { entry["itemCountError"] = e.Message; }
                         try { entry["string"] = Call(lib, libType, "ConvertToString", 2, new object[] { bp, false }); } catch (Exception e) { entry["stringError"] = e.InnerException != null ? e.InnerException.Message : e.Message; }
-                        try { nodes = 0; entry["items"] = Dump(Member(bp, "Items"), 0, new List<object>(), true); } catch (Exception e) { entry["dumpError"] = e.Message; }
+                        try { entry["entities"] = Compact(bp); } catch (Exception e) { entry["dumpError"] = e.Message; }
                         list.Add(entry);
                     }
                     foreach (var sub in Seq(Member(fld, "Folders"))) walk(sub, path + "/" + Convert.ToString(Member(sub, "Name")));
                 };
                 walk(Member(lib, "Root"), "");
-                NodeLimit = 12000;
                 File.WriteAllText(Path.Combine(folder, "blueprint-library.json"), Json(Obj("exporter", "PlannerDataExporter " + Version, "count", list.Count, "blueprints", list)), new UTF8Encoding(false));
                 probe["libraryBlueprints"] = list.Count;
             }
@@ -370,7 +403,7 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
                         if ((ok is bool ? (bool)ok : true) && parsed != null) {
                             var bp = Member(parsed, "Value") != null && parsed.GetType().Name.StartsWith("Option") ? Member(parsed, "Value") : parsed;
                             t["name"] = Member(bp, "Name"); t["gameVersion"] = Member(bp, "GameVersion");
-                            try { nodes = 0; NodeLimit = 150000; t["items"] = Dump(Member(bp, "Items"), 0, new List<object>(), true); } finally { NodeLimit = 12000; }
+                            try { t["entities"] = Compact(bp); } catch (Exception e) { t["dumpError"] = e.Message; }
                             try { var back = Convert.ToString(Call(lib, libType, "ConvertToString", 2, new object[] { bp, false })); t["roundTripEqual"] = back == text; t["roundTripLength"] = back.Length; t["inputLength"] = text.Length; if (back != text) t["roundTripString"] = back; } catch (Exception e) { t["roundTripError"] = e.InnerException != null ? e.InnerException.Message : e.Message; }
                         }
                     } catch (Exception e) { t["exception"] = e.InnerException != null ? e.InnerException.ToString() : e.ToString(); }

@@ -311,6 +311,18 @@ class PlannerApi:
             return {"ok": False, "error": "The file is over 3 MB; attach it instead.", "path": str(f)}
         return {"ok": True, "text": f.read_text(encoding="utf-8"), "path": str(f), "bytes": f.stat().st_size}
 
+    def read_blueprint_library(self) -> dict:
+        """The blueprint library the exporter wrote (blueprint-library.json), for the Blueprints tab."""
+        f = self._exports / "blueprint-library.json"
+        if not f.is_file():
+            return {"ok": False, "error": "No blueprint library yet. Rebuild the exporter, start the game with it enabled and load a map, then wait a minute."}
+        if f.stat().st_size > 300_000_000:
+            return {"ok": False, "error": "The library file is over 300 MB. Rebuild the exporter (newer versions write far less) and load a map again."}
+        try:
+            return {"ok": True, "text": f.read_text(encoding="utf-8"), "bytes": f.stat().st_size}
+        except OSError as e:
+            return {"ok": False, "error": f"Could not read the library: {e}"}
+
     def save_blueprint_input(self, text: str) -> dict:
         """Put a blueprint string where the exporter will decode it on the next map load (blueprints\\in\\planner.txt)."""
         text = (text or "").strip()
