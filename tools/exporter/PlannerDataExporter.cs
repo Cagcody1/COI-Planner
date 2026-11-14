@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.3.1";
+    const string Version = "0.3.2";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000;
     static int NodeLimit = 12000;
@@ -349,11 +349,26 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
                     tests.Add(t);
                     try {
                         var text = File.ReadAllText(file).Trim();
-                        var args = new object[] { text, ctx, null, null };
-                        var ok = Call(null, libType, "TryParseFromString", 4, args);
-                        t["parsed"] = ok; t["error"] = args[2];
-                        if (ok is bool && (bool)ok && args[3] != null) {
-                            var bp = args[3];
+                        MethodInfo pm = null;
+                        var sigs = new List<object>(); t["parseMethods"] = sigs;
+                        foreach (var m in libType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                            if (m.Name.IndexOf("Parse", StringComparison.OrdinalIgnoreCase) >= 0 || m.Name.IndexOf("FromString", StringComparison.OrdinalIgnoreCase) >= 0) { sigs.Add(Sig(m)); if (m.Name == "TryParseFromString" && pm == null) pm = m; }
+                        if (pm == null) throw new MissingMethodException("TryParseFromString");
+                        var pars = pm.GetParameters(); var args = new object[pars.Length]; int strAt = -1;
+                        for (int i = 0; i < pars.Length; i++) {
+                            var pt = pars[i].ParameterType; if (pt.IsByRef) pt = pt.GetElementType();
+                            if (pars[i].IsOut || pars[i].ParameterType.IsByRef) args[i] = pt.IsValueType ? Activator.CreateInstance(pt) : null;
+                            else if (pt == typeof(string) && strAt < 0) { args[i] = text; strAt = i; }
+                            else if (ctx != null && pt.IsInstanceOfType(ctx)) args[i] = ctx;
+                            else if (pt == typeof(bool)) args[i] = false;
+                        }
+                        var ok = pm.Invoke(pm.IsStatic ? null : lib, args);
+                        t["parsed"] = ok;
+                        object parsed = null;
+                        for (int i = 0; i < pars.Length; i++) if (pars[i].ParameterType.IsByRef) { var o = args[i]; if (o is string) t["error"] = o; else if (o != null && parsed == null) parsed = o; }
+                        if (parsed == null && ok != null && !(ok is bool)) parsed = ok;
+                        if ((ok is bool ? (bool)ok : true) && parsed != null) {
+                            var bp = Member(parsed, "Value") != null && parsed.GetType().Name.StartsWith("Option") ? Member(parsed, "Value") : parsed;
                             t["name"] = Member(bp, "Name"); t["gameVersion"] = Member(bp, "GameVersion");
                             try { nodes = 0; NodeLimit = 150000; t["items"] = Dump(Member(bp, "Items"), 0, new List<object>(), true); } finally { NodeLimit = 12000; }
                             try { var back = Convert.ToString(Call(lib, libType, "ConvertToString", 2, new object[] { bp, false })); t["roundTripEqual"] = back == text; t["roundTripLength"] = back.Length; t["inputLength"] = text.Length; if (back != text) t["roundTripString"] = back; } catch (Exception e) { t["roundTripError"] = e.InnerException != null ? e.InnerException.Message : e.Message; }
