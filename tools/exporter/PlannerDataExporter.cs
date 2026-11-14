@@ -21,7 +21,7 @@ using Mafi.Core.Mods;
 using Mafi.Core.Prototypes;
 
 public sealed class PlannerDataExporter : DataOnlyMod, IMod {
-    const string Version = "0.3.0";
+    const string Version = "0.3.1";
     // Hard limits so a bad object graph can never hang game start-up: per prototype and for the whole export.
     const int MaxDepth = 6, MaxItems = 3000;
     static int NodeLimit = 12000;
@@ -267,15 +267,37 @@ public sealed class PlannerDataExporter : DataOnlyMod, IMod {
         if (count is int && idx != null) { for (int i = 0; i < (int)count; i++) yield return idx.GetValue(v, new object[] { i }); yield break; }
         foreach (var x in Items(v)) yield return x;
     }
+    static object Unwrap(object r, Type t) {
+        if (r == null) return null;
+        if (t.IsInstanceOfType(r)) return r;
+        var v = Member(r, "Value");   // Option<T>
+        return v != null && t.IsInstanceOfType(v) ? v : null;
+    }
     object TryResolve(Type t, List<object> steps) {
         if (resolverRef == null || t == null) return null;
-        foreach (var m in resolverRef.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
-            if (!m.IsGenericMethodDefinition || m.GetGenericArguments().Length != 1) continue;
-            if (m.Name.IndexOf("Resolve", StringComparison.OrdinalIgnoreCase) < 0 && m.Name.IndexOf("Get", StringComparison.OrdinalIgnoreCase) < 0) continue;
-            var ps = m.GetParameters(); if (ps.Length != 0) continue;
-            try { var r = m.MakeGenericMethod(t).Invoke(resolverRef, null); steps.Add(Obj("method", m.Name, "ok", r != null)); if (r != null) return r; }
-            catch (Exception e) { steps.Add(Obj("method", m.Name, "error", e.InnerException != null ? e.InnerException.Message : e.Message)); }
+        var names = new[] { "Resolve", "TryResolve", "GetResolvedInstance", "GetResolvedDependency" };
+        foreach (var name in names) {
+            foreach (var m in resolverRef.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)) {
+                if (m.Name != name || m.GetParameters().Length > 1) continue;
+                try {
+                    var ps = m.GetParameters();
+                    object r;
+                    if (m.IsGenericMethodDefinition) {
+                        if (m.GetGenericArguments().Length != 1 || ps.Length != 0) continue;
+                        r = m.MakeGenericMethod(t).Invoke(resolverRef, null);
+                    } else {
+                        if (ps.Length != 1 || ps[0].ParameterType != typeof(Type)) continue;
+                        r = m.Invoke(resolverRef, new object[] { t });
+                    }
+                    var u = Unwrap(r, t);
+                    steps.Add(Obj("method", name, "generic", m.IsGenericMethodDefinition, "ok", u != null, "returned", r == null ? null : r.GetType().Name));
+                    if (u != null) return u;
+                } catch (Exception e) { steps.Add(Obj("method", name, "error", e.InnerException != null ? e.InnerException.Message : e.Message)); }
+            }
         }
+        try {
+            foreach (var o in Seq(Member(resolverRef, "AllResolvedInstances"))) if (o != null && t.IsInstanceOfType(o)) { steps.Add(Obj("method", "AllResolvedInstances scan", "ok", true)); return o; }
+        } catch (Exception e) { steps.Add(Obj("method", "AllResolvedInstances scan", "error", e.Message)); }
         return null;
     }
     static object Call(object target, Type type, string name, int argCount, object[] args) {
