@@ -1,0 +1,142 @@
+Pocket Programmer v3.2.3   2026-11-14 05:28:46
+System: Windows-11-10.0.26300-SP0   Python 3.12.10   from source   portable
+Project: COI-Planner
+------------------------------------------------------------
+===== RELEASE COI-Planner =====
+[no-trace] temp files and tool caches stay in C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer
+[check] COI-Planner needs 4 program(s); present: Git, GitHub CLI, Python 3.12, Node.js (LTS)
+[check] all required programs are present
+[check] GitHub accepts the login
+[fetch] Cagcody1/Pocket-COIPlanner
+  $ gh repo clone Cagcody1/Pocket-COIPlanner "C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner"
+    Cloning into 'C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner'...
+  $ git remote set-head origin --auto
+    'origin/HEAD' is unchanged and points to 'main'
+  $ git rev-parse --abbrev-ref origin/HEAD
+    origin/main
+  $ git rev-parse --verify --quiet refs/remotes/origin/main
+    b2bc862596c2b4c352cb56097755eab2274069b6
+  $ git checkout -f -B main origin/main
+    Reset branch 'main'
+    branch 'main' set up to track 'origin/main'.
+    Your branch is up to date with 'origin/main'.
+  $ git clean -fdx -e .venv
+  $ git rev-parse --short HEAD
+  $ git rev-parse HEAD
+  $ git rev-parse origin/main
+[fetch] building b2bc862, the newest commit on main
+[venv] Python 3.12
+  $ "C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\tools\python\python.exe" -m venv .venv
+  $ python -m pip install --upgrade pip
+[build] COI-Planner  version=0.1.21  build=25
+[setup]
+  $ npm ci
+    
+    added 52 packages, and audited 53 packages in 4s
+    
+    6 vulnerabilities (3 moderate, 1 high, 2 critical)
+    
+    To address all issues (including breaking changes), run:
+      npm audit fix --force
+    
+    Run `npm audit` for details.
+    npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+    npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+    npm warn install-scripts   esbuild@0.21.5 (postinstall: node install.js)
+    npm warn install-scripts
+    npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+  $ python -m pip install pytest
+    Collecting pytest
+      Using cached pytest-9.2.0-py3-none-any.whl.metadata (7.9 kB)
+    Collecting colorama>=0.4 (from pytest)
+      Using cached colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+    Collecting iniconfig>=2 (from pytest)
+      Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+    Collecting packaging>=24 (from pytest)
+      Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+    Collecting pluggy<2,>=1.6 (from pytest)
+      Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+    Collecting pygments>=2.15 (from pytest)
+      Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+    Using cached pytest-9.2.0-py3-none-any.whl (411 kB)
+    Using cached pluggy-1.7.0-py3-none-any.whl (27 kB)
+    Using cached colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+    Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+    Using cached packaging-26.3-py3-none-any.whl (129 kB)
+    Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+    Installing collected packages: pygments, pluggy, packaging, iniconfig, colorama, pytest
+    
+    Successfully installed colorama-0.4.6 iniconfig-2.3.1 packaging-26.3 pluggy-1.7.0 pygments-2.21.0 pytest-9.2.0
+[test]
+  $ npm run data:validate
+    
+    > coi-planner@0.1.21 data:validate
+    > tsx scripts/validate-data.ts
+    
+    data/0.8.1a-b550-Update-4/gamedata.json: ok
+    data/0.8.8d/gamedata.json: ok
+    data/prototype/gamedata.json: ok
+  $ npm test
+    
+    > coi-planner@0.1.21 test
+    > vitest run
+    
+    
+    [1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/cagco/Desktop/PocketApps/Apps/PocketProgrammer/work/COI-Planner[39m
+    
+     [32mâœ“[39m tests/summarize.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+     [32mâœ“[39m tests/engine.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 12[2mms[22m[39m
+     [32mâœ“[39m tests/realdata.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 14[2mms[22m[39m
+     [32mâœ“[39m tests/layout.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 64[2mms[22m[39m
+     [32mâœ“[39m tests/chain.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 29[2mms[22m[39m
+     [32mâœ“[39m tests/planner-import.test.ts [2m([22m[2m10 tests[22m[2m)[22m[90m 20[2mms[22m[39m
+     [32mâœ“[39m tests/import.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+    
+    [2m Test Files [22m [1m[32m7 passed[39m[22m[90m (7)[39m
+    [2m      Tests [22m [1m[32m46 passed[39m[22m[90m (46)[39m
+    [2m   Start at [22m 05:28:24
+    [2m   Duration [22m 915ms[2m (transform 679ms, setup 0ms, collect 1.35s, tests 149ms, environment 1ms, prepare 985ms)[22m
+    
+  $ python -m pytest tests_py -q
+    ..............s.....                                                     [100%]
+    19 passed, 1 skipped in 1.45s
+[build]
+  $ npm run build:single
+    
+    > coi-planner@0.1.21 build:single
+    > tsc --noEmit && vite build --config vite.single.config.ts && node scripts/name-single.mjs
+    
+    [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+    transforming...
+    [32mâœ“[39m 26 modules transformed.
+    rendering chunks...
+    [plugin vite:singlefile]
+    
+    [plugin vite:singlefile] Inlining: index-BEPa2COy.js
+    [plugin vite:singlefile] Inlining: style-Da0dalmj.css
+    computing gzip size...
+    [2mdist-single/[22m[32mindex.html  [39m[1m[2m407.05 kB[22m[1m[22m[2m â”‚ gzip: 72.94 kB[22m
+    [32mâœ“ built in 405ms[39m
+    dist-single/coi-planner.html  398 kB
+  $ python packaging/build_embedded.py --version 0.1.21
+    downloading https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip
+    proxy_tools 0.1.0 installed (checked against the pinned SHA-256)
+    COI Planner check: Python 3.12.10, folder C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner\dist\COI-Planner
+    backend modules: OK
+    pywebview ? imported: OK
+    window backend (WinForms + WebView2): OK
+    built C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner\dist\COI-Planner
+  require dist/COI-Planner/app/COI-Planner.html: ok
+  require dist/COI-Planner/python/pythonw.exe: ok
+[package]
+  zip dist\COI-Planner -> dist\COI-Planner-Portable-v0.1.21.zip
+[done] artifacts:
+  C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner\dist\COI-Planner-Portable-v0.1.21.zip
+[release] Cagcody1/Pocket-COIPlanner  mode=tag  tag=v0.1.21
+  $ gh release create v0.1.21 "C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\work\COI-Planner\dist\COI-Planner-Portable-v0.1.21.zip" --repo Cagcody1/Pocket-COIPlanner --target b2bc862596c2b4c352cb56097755eab2274069b6 --title "COI Planner v0.1.21" --notes-file "C:\Users\cagco\Desktop\PocketApps\Apps\PocketProgrammer\tmp\release_notes_COI-Planner.md" --latest
+    https://github.com/Cagcody1/Pocket-COIPlanner/releases/tag/v0.1.21
+[cleanup] Delete everything for the project (smallest) - freed 139.5 MB
+
+All done.
+
+RESULT: finished OK

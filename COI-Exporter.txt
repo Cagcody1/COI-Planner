@@ -1,0 +1,36 @@
+PocketBuilder v2.0.9   2026-11-12 17:19:53
+System: Windows-11-10.0.26300-SP0   Python 3.12.10   from source   portable
+Project: COI-Exporter
+------------------------------------------------------------
+===== RELEASE COI-Exporter =====
+[no-trace] temp files and tool caches stay in C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder
+[check] COI-Exporter needs 3 program(s); present: Git, GitHub CLI, .NET SDK
+[check] all required programs are present
+[check] GitHub accepts the login
+[fetch] Cagcody1/COI-Planner
+  $ gh repo clone Cagcody1/COI-Planner "C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\work\COI-Exporter"
+    Cloning into 'C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\work\COI-Exporter'...
+  $ git rev-parse --short HEAD
+  $ git rev-parse HEAD
+[version] 0.1.2 is already released - using the next free version 0.1.7.
+  Note: the program itself reads its version number from the project's own files, so it will still report 0.1.2 inside. Update that file in the project if you want them to match.
+[version] tools/exporter/manifest.json set to 0.1.7 in the working copy, so the program reports 0.1.7 too.
+[build] COI-Exporter  version=0.1.7  build=9
+[build]
+  $ powershell -NoProfile -ExecutionPolicy Bypass -File tools\exporter\build.ps1
+    Game: c:\program files (x86)\steam\steamapps\common\Captain of Industry
+    Mod folder ready: C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\work\COI-Exporter\tools\exporter\build\PlannerDataExporter
+  require tools/exporter/build/PlannerDataExporter/PlannerDataExporter.dll: ok
+[package]
+  copy README.md -> tools\exporter\build\PlannerDataExporter\README.md
+  zip tools\exporter\build\PlannerDataExporter -> tools\exporter\build\PlannerDataExporter-v0.1.7.zip
+[done] artifacts:
+  C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\work\COI-Exporter\tools\exporter\build\PlannerDataExporter-v0.1.7.zip
+[release] Cagcody1/COI-Planner  mode=tag  tag=exporter-v0.1.7
+  $ gh release create exporter-v0.1.7 "C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\work\COI-Exporter\tools\exporter\build\PlannerDataExporter-v0.1.7.zip" --repo Cagcody1/COI-Planner --target 860f53622ca65d992c8747efe37eea5124d99d0b --title "COI Planner game-data exporter v0.1.7" --notes-file "C:\Users\cagco\Desktop\PocketApps\Apps\PocketBuilder\tmp\release_notes_COI-Exporter.md" --latest
+    https://github.com/Cagcody1/COI-Planner/releases/tag/exporter-v0.1.7
+[cleanup] Delete everything for the project (smallest) - freed 888.4 KB
+
+All done.
+
+RESULT: finished OK
